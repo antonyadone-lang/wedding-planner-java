@@ -18,4 +18,23 @@ Portfolio project demonstrating Object-Oriented Programming concepts in java.
 ## Technologies
 -Java
 -OOP principles.
-(I started studying java 3 weeks ago without any prior knowledge of coding)
+
+## Suppliers and Cost Management
+
+### Abstract Class Pattern
+The project implements an abstract class `ServizioMatrimonio` that defines:
+- Common attributes: `nomeFornitore`, `contatto`
+- Abstract method: `calcolaCosto()` - implemented differently by each supplier
+- Concrete method: `scheda()` - displays supplier information
+
+### Supplier Classes
+1. **Fotografo** (Photographer) - Fixed package cost
+2. **DJ** - Fixed package cost
+3. **Catering** - Cost per person × number of guests
+4. **Fiorista** (Florist) - Fixed cost + transportation fee
+
+### Cost Calculation
+The `WeddingManager` class:
+- Stores all suppliers in an `ArrayList<ServizioMatrimonio>`
+- Calculates total wedding cost using polymorphism
+- Each supplier's `calcolaCosto()` method is called dynamically
