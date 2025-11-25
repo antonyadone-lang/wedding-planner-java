@@ -17,5 +17,22 @@ public class WeddingPlannerMain {
 
         testimone1.presentati();
         invitato1.presentati();
+
+        Fiorista fiorista1 = new Fiorista("Fiori Felici","fiori.felici@gmail.com",550,80);
+        Fotografo fotografo1 = new Fotografo("Photo service","photo.service@yahoo.com",3000);
+        Dj dj1 = new Dj("Agenzia Divertiamoci","divertiamoci@gmail.com", 2500);
+        Catering catering1 = new Catering("Catering Service", "service.catering@gmail.com",200, 100);
+        ServiziMatrimonio[] fornitori = {fiorista1, fotografo1, dj1, catering1};
+        for(ServiziMatrimonio fornitore : fornitori){
+            fornitore.scheda();
+            System.out.println("---");
+        }
+        weddingManager.aggiungiFornitore(fiorista1);
+        weddingManager.aggiungiFornitore(fotografo1);
+        weddingManager.aggiungiFornitore(dj1);
+        weddingManager.aggiungiFornitore(catering1);
+        double costoTotale = weddingManager.calcolaTotaleFornitori();
+        System.out.println("Costo totale matrimonio: €" + costoTotale);
+
     }
 }
