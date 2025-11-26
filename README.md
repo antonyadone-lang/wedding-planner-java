@@ -38,3 +38,9 @@ The `WeddingManager` class:
 - Stores all suppliers in an `ArrayList<ServizioMatrimonio>`
 - Calculates total wedding cost using polymorphism
 - Each supplier's `calcolaCosto()` method is called dynamically
+
+## Interface and Polymorphism
+- **Interface**: `Tracciabile` for tracking task completion
+- **Enum**: `StatoLavoro` for detailed state management in Fiorista
+- **Implementations**: Fiorista (with Enum) and Compiti (with boolean)
+- **Polymorphism**: WeddingManager manages different objects through same interface
