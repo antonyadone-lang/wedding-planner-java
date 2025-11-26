@@ -4,6 +4,9 @@ public class WeddingPlannerMain {
         Invitato invitato2 = new Invitato("Rosa","Bianco", "rosa.bianco@yahoo.com");
         Invitato invitato3 = new Invitato("Luca","Dimuccio", "luca.dimuccio@gmail.com");
         Testimone testimone1 = new Testimone("Lisa","Lisi", "lisa.lisi@gmail.com",true );
+        Compiti compito1 = new Compiti("Invia inviti");
+        Compiti compito2 = new Compiti("Prenotare Chiesa");
+        Compiti compito3 = new Compiti("Ordinare Bomboniere");
 
         Tavolo tavolo1 = new Tavolo(1, 12);
         Tavolo tavolo2 = new Tavolo(2, 10);
@@ -33,6 +36,21 @@ public class WeddingPlannerMain {
         weddingManager.aggiungiFornitore(catering1);
         double costoTotale = weddingManager.calcolaTotaleFornitori();
         System.out.println("Costo totale matrimonio: €" + costoTotale);
+
+        weddingManager.aggiungiTracciabile(fiorista1);
+        weddingManager.aggiungiTracciabile(compito1);
+        weddingManager.aggiungiTracciabile(compito2);
+        weddingManager.aggiungiTracciabile(compito3);
+        System.out.println("\n=== STATO INIZIALE TRACCIABILI ===");
+        weddingManager.mostraStatoTracciabili();
+
+        System.out.println("\n=== COMPLETAMENTO ATTIVITÀ ===");
+        compito2.segnaCompletato();
+        compito3.segnaCompletato();
+        fiorista1.segnaCompletato();
+
+        System.out.println("\n=== STATO FINALE ===");
+        weddingManager.mostraStatoTracciabili();
 
     }
 }

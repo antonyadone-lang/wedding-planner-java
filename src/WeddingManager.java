@@ -3,11 +3,13 @@ public class WeddingManager {
     private ArrayList<Invitato> listaInvitati;
     private ArrayList<Tavolo> listaTavoli;
     private ArrayList<ServiziMatrimonio> elencoFornitori;
+    private ArrayList<Tracciabile> listaTracciabili;
 
     public WeddingManager(){
         this.listaInvitati = new ArrayList<>();
         this.listaTavoli = new ArrayList<>();
         this.elencoFornitori = new ArrayList<>();
+        this.listaTracciabili = new ArrayList<>();
     }
     public void assegnaTavolo(Invitato invitato, Tavolo tavolo){
         boolean aggiunto = tavolo.aggiungiOspite(invitato);
@@ -20,6 +22,7 @@ public class WeddingManager {
     public void aggiungiFornitore(ServiziMatrimonio fornitore){
         elencoFornitori.add(fornitore);
     }
+    public void aggiungiTracciabile(Tracciabile tracciabile){listaTracciabili.add(tracciabile);}
     public double calcolaTotaleFornitori(){
         double totale = 0;
         for(ServiziMatrimonio fornitore : elencoFornitori){
@@ -27,5 +30,10 @@ public class WeddingManager {
 
         }
          return totale;
+    }
+    public void mostraStatoTracciabili(){
+        for(Tracciabile tracciabile : listaTracciabili){
+            System.out.println("Stato: "+ tracciabile.getStatoTracciamento());
+        }
     }
 }
