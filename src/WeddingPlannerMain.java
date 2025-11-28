@@ -35,6 +35,8 @@ public class WeddingPlannerMain {
         weddingManager.aggiungiFornitore(dj1);
         weddingManager.aggiungiFornitore(catering1);
         double costoTotale = weddingManager.calcolaTotaleFornitori();
+        double costoLordo = weddingManager.calcolaTotaleLordo();
+        System.out.println("Costo Lordo matrimonio: €" + costoLordo);
         System.out.println("Costo totale matrimonio: €" + costoTotale);
 
         weddingManager.aggiungiTracciabile(fiorista1);
@@ -51,6 +53,13 @@ public class WeddingPlannerMain {
 
         System.out.println("\n=== STATO FINALE ===");
         weddingManager.mostraStatoTracciabili();
+
+        System.out.println("\n=== CONTATORE INVITATI ===");
+        System.out.println("Totale invitati: " + Invitato.getTotaleInvitati());
+        System.out.println("Nome: " + invitato1.getNome() + " Cognome: " + invitato1.getCognome() +  " ID: " + invitato1.getIdInvitato());
+        System.out.println("Nome: " + invitato2.getNome() + " Cognome: " + invitato2.getCognome() +  " ID: " + invitato2.getIdInvitato());
+        System.out.println("Nome: " + invitato3.getNome() + " Cognome: " + invitato3.getCognome() +  " ID: " + invitato3.getIdInvitato());
+        System.out.println("Nome: " + testimone1.getNome() + " Cognome: " + testimone1.getCognome() +  " ID: " + testimone1.getIdInvitato());
 
     }
 }

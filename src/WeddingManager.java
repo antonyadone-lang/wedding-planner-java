@@ -27,9 +27,17 @@ public class WeddingManager {
         double totale = 0;
         for(ServiziMatrimonio fornitore : elencoFornitori){
             totale += fornitore.calcoloCosto();
-
         }
+        double iva = totale * ConfigurazioneMatrimonio.ALIQUOTA_IVA;
+        totale += iva;
          return totale;
+    }
+    public double calcolaTotaleLordo() {
+        double totale = 0;
+        for (ServiziMatrimonio fornitore : elencoFornitori) {
+            totale += fornitore.calcoloCosto();
+        }
+        return totale;
     }
     public void mostraStatoTracciabili(){
         for(Tracciabile tracciabile : listaTracciabili){
