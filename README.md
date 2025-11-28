@@ -44,3 +44,22 @@ The `WeddingManager` class:
 - **Enum**: `StatoLavoro` for detailed state management in Fiorista
 - **Implementations**: Fiorista (with Enum) and Compiti (with boolean)
 - **Polymorphism**: WeddingManager manages different objects through same interface
+
+## Static and Final Keywords
+
+### Static Members
+- **Static counter**: `Invitato.contatoreInvitati` - Tracks total number of guests created across all instances
+- **Static method**: `getTotaleInvitati()` - Returns the total guest count without requiring an instance
+- **Static constants**: `ConfigurazioneMatrimonio` class with shared configuration values
+
+### Final Members
+- **Final instance variable**: `idInvitato` - Unique immutable ID assigned to each guest at creation
+- **Final constants**: Configuration values like `CAPACITA_MASSIMA_SALA`, `ALIQUOTA_IVA`, `MIN_INVITATI`
+
+### Configuration Constants
+The `ConfigurazioneMatrimonio` class provides:
+- `CAPACITA_MASSIMA_SALA` (120) - Maximum venue capacity
+- `ALIQUOTA_IVA` (0.22) - VAT rate for cost calculations
+- `MIN_PERSONE_PER_TAVOLO` (6) - Minimum guests per table
+- `MAX_PERSONE_PER_TAVOLO` (14) - Maximum guests per table
+- `MIN_INVITATI` (100) - Minimum total guests required
