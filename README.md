@@ -98,3 +98,27 @@ Demonstrates generic type invariance and wildcard usage:
 - **Code reusability**: Single generic class works with multiple types
 - **Professional patterns**: RisultatoOperazione follows industry-standard error handling
 - **Flexibility**: Wildcards enable working with inheritance hierarchies in collections
+
+## Collections and Iterators
+
+### Iterator Pattern for Safe Removal
+Demonstrates safe collection modification during iteration using the Iterator pattern:
+
+#### rimuoviInvitatiSenzaRSVP(LocalDate dataLimite)
+Method in WeddingManager that removes guests who:
+- Did not respond (dataRisposta == null)
+- Responded after the deadline (dataRisposta.isAfter(dataLimite))
+- Responded but did not confirm (confermato == false)
+
+**Key Implementation**:
+- Uses `Iterator<Invitato>` instead of for-each loop
+- Calls `iterator.remove()` for safe removal during iteration
+- Avoids `ConcurrentModificationException`
+- Returns count of removed guests
+
+### Date Management with LocalDate
+Integration of `java.time.LocalDate` for RSVP tracking:
+- **dataRisposta** attribute in Invitato class
+- Date comparison with `.isAfter()` method
+- Null-safe date validation
+- Utility method `haRisposto()` for readability
