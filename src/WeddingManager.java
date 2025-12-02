@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
+import java.time.LocalDate;
+
 public class WeddingManager {
     // ========== ATTRIBUTI ==========
     private ArrayList<Invitato> listaInvitati;
@@ -24,13 +27,17 @@ public class WeddingManager {
             System.out.println("Impossibile assegnare " + invitato.getNome() + " - Tavolo pieno!");
         }
     }
+
     public void aggiungiFornitore(ServiziMatrimonio fornitore){
         elencoFornitori.add(fornitore);
     }
+
     public void aggiungiTracciabile(Tracciabile tracciabile){listaTracciabili.add(tracciabile);}
+
     public void aggiungiInvitato(Invitato invitato){
         listaInvitati.add(invitato);
     }
+
     public double calcolaTotaleFornitori(){
         double totale = 0;
         for(ServiziMatrimonio fornitore : elencoFornitori){
@@ -40,6 +47,7 @@ public class WeddingManager {
         totale += iva;
          return totale;
     }
+
     public double calcolaTotaleLordo() {
         double totale = 0;
         for (ServiziMatrimonio fornitore : elencoFornitori) {
@@ -47,11 +55,13 @@ public class WeddingManager {
         }
         return totale;
     }
+
     public void mostraStatoTracciabili(){
         for(Tracciabile tracciabile : listaTracciabili){
             System.out.println("Stato: "+ tracciabile.getStatoTracciamento());
         }
     }
+
     public RisultatoOperazione<Invitato> cercaInvitatoPerEmail(String email){
         for(Invitato inv : listaInvitati){
             if(inv.getEmail().equals(email)) {
@@ -60,9 +70,27 @@ public class WeddingManager {
         }
         return new RisultatoOperazione<>("Invitato con email " + email + " non trovato");
     }
+
     public void stampaNomi(List<? extends Invitato> lista){
         for(Invitato inv : lista){
             System.out.println(inv.getNome() + " " + inv.getCognome());
         }
+    }
+
+    public int rimuoviInvitatiSenzaRSVP (LocalDate dataLimite){
+        int rimossi = 0;
+        Iterator<Invitato> iterator = listaInvitati.iterator();
+        while(iterator.hasNext()){
+            Invitato inv = iterator.next();
+            if(inv.getDataRisposta() == null || inv.getDataRisposta().isAfter(dataLimite) || !inv.isConfermato()){
+                iterator.remove();
+                rimossi++;
+            }
+        }
+        return rimossi;
+    }
+
+    public List<Invitato> getListaInvitati(){
+        return listaInvitati;
     }
 }

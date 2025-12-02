@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.time.LocalDate;
 
 public class WeddingPlannerMain {
     public static void main(String[] args) {
@@ -127,7 +128,17 @@ public class WeddingPlannerMain {
         System.out.println("\nLista Testimoni:");
         weddingManager.stampaNomi(listaTestimoni);
 
-
+        // ========== TEST ITERATOR (Rimozione RSVP) ==========
+        System.out.println("\n=== TEST RIMOZIONE INVITATI SENZA RSVP ===");
+        LocalDate dataLimite = LocalDate.of(2025, 10, 4);
+        invitato1.setDataRisposta(LocalDate.of(2025, 8, 20));
+        invitato1.setConfermato(true);
+        invitato2.setDataRisposta(null);
+        invitato3.setDataRisposta(LocalDate.of(2025,10,5));
+        int rimossi = weddingManager.rimuoviInvitatiSenzaRSVP(dataLimite);
+        System.out.println("Invitati Rimossi: " + rimossi);
+        System.out.println("\nInvitati Rimanenti: ");
+        weddingManager.stampaNomi(weddingManager.getListaInvitati());
 
     }
 }
