@@ -135,9 +135,50 @@ public class WeddingPlannerMain {
         invitato1.setConfermato(true);
         invitato2.setDataRisposta(null);
         invitato3.setDataRisposta(LocalDate.of(2025,10,5));
+        testimone1.setDataRisposta(LocalDate.of(2025, 8, 15));
+        testimone1.setConfermato(true);
         int rimossi = weddingManager.rimuoviInvitatiSenzaRSVP(dataLimite);
         System.out.println("Invitati Rimossi: " + rimossi);
         System.out.println("\nInvitati Rimanenti: ");
+        weddingManager.stampaNomi(weddingManager.getListaInvitati());
+
+        // ========== TEST HASHSET (Duplicati) ==========
+        System.out.println("\n=== TEST CONTROLLO DUPLICATI ===");
+        Invitato duplicato = new Invitato ("Giovanni", "Verdi", "mario.rossi@gmail.com");
+        boolean aggiunto = weddingManager.aggiungiInvitato(duplicato);
+        if(!aggiunto){
+            System.out.println("Duplicato correttamente bloccato");
+        }
+
+        // ========== TEST HASHMAP (Ricerca per ID) ==========
+        System.out.println("\n=== TEST HASHMAP (Ricerca per ID) ===");
+        System.out.println("ID Fiorista: " + fiorista1.getIdServizio());
+        System.out.println("ID Fotografo: " + fotografo1.getIdServizio());
+        System.out.println("ID Dj: " + dj1.getIdServizio());
+        System.out.println("ID Catering: " + catering1.getIdServizio());
+
+        // ========== TEST LAMBDA EXPRESSIONS ==========
+        System.out.println("\n=== TEST LAMBA EXPRESSIONS ===");
+        List<Invitato> confermati = weddingManager.filtraInvitati(inv -> inv.isConfermato());
+        System.out.println("Invitati confermati: ");
+        weddingManager.stampaNomi(confermati);
+
+        System.out.println("\nInvitati che hanno risposto:");
+        List<Invitato> conRisposta = weddingManager.filtraInvitati(inv -> inv.haRisposto());
+        weddingManager.stampaNomi(conRisposta);
+
+        System.out.println("\nTestimoni:");
+        List<Invitato> testimoni = weddingManager.filtraInvitati(inv -> inv instanceof Testimone);
+        weddingManager.stampaNomi(testimoni);
+
+        // ========== TEST PREDICATE (Rimozione condizionale) ==========
+        System.out.println("\n=== TEST PREDICATE (Rimozione condizionale) ===");
+        System.out.println("Invitati prima: " + weddingManager.getListaInvitati().size());
+
+        weddingManager.rimuoviSe(inv -> !inv.isConfermato());
+
+        System.out.println("Invitati dopo rimozione non confermati: " + weddingManager.getListaInvitati().size());
+        System.out.println("Invitati rimanenti:");
         weddingManager.stampaNomi(weddingManager.getListaInvitati());
 
     }

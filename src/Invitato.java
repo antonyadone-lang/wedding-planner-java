@@ -62,4 +62,19 @@ public class Invitato {
     public boolean haRisposto(){
         return dataRisposta != null;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+
+        Invitato altro = (Invitato) obj;
+        return email.equals(altro.email);
+    }
+
+    @Override
+    public int hashCode(){
+        return email.hashCode();
+    }
 }

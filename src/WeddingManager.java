@@ -1,7 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.HashSet;
+import java.util.HashMap;
 import java.time.LocalDate;
+import java.util.function.Predicate;
 
 public class WeddingManager {
     // ========== ATTRIBUTI ==========
@@ -9,6 +12,9 @@ public class WeddingManager {
     private ArrayList<Tavolo> listaTavoli;
     private ArrayList<ServiziMatrimonio> elencoFornitori;
     private ArrayList<Tracciabile> listaTracciabili;
+    private HashSet<String> emailRegistrate;
+    private HashMap<Integer, ServiziMatrimonio> mappaFornitori;
+
 
     // ========== COSTRUTTORE ==========
     public WeddingManager(){
@@ -16,6 +22,8 @@ public class WeddingManager {
         this.listaTavoli = new ArrayList<>();
         this.elencoFornitori = new ArrayList<>();
         this.listaTracciabili = new ArrayList<>();
+        this.emailRegistrate = new HashSet<>();
+        this.mappaFornitori = new HashMap<>();
     }
 
     // ========== METODI ==========
@@ -30,12 +38,19 @@ public class WeddingManager {
 
     public void aggiungiFornitore(ServiziMatrimonio fornitore){
         elencoFornitori.add(fornitore);
+        mappaFornitori.put(fornitore.getIdServizio(), fornitore);
     }
 
     public void aggiungiTracciabile(Tracciabile tracciabile){listaTracciabili.add(tracciabile);}
 
-    public void aggiungiInvitato(Invitato invitato){
+    public boolean aggiungiInvitato(Invitato invitato){
+        if (emailRegistrate.contains(invitato.getEmail())) {
+            System.out.println("ERRORE: email già registrata - " + invitato.getEmail());
+            return false;
+        }
         listaInvitati.add(invitato);
+        emailRegistrate.add(invitato.getEmail());
+        return true;
     }
 
     public double calcolaTotaleFornitori(){
@@ -92,5 +107,22 @@ public class WeddingManager {
 
     public List<Invitato> getListaInvitati(){
         return listaInvitati;
+    }
+
+    public ServiziMatrimonio cercaFornitorePerId(int id){
+        return mappaFornitori.get(id);
+    }
+
+    public List<Invitato> filtraInvitati(FiltroInvitato filtro){
+        List<Invitato> risultato = new ArrayList<>();
+        for(Invitato inv : listaInvitati){
+            if (filtro.soddisfaCondizione(inv))
+                risultato.add(inv);
+        }
+        return risultato;
+    }
+
+    public void rimuoviSe(Predicate<Invitato> criterio){
+        listaInvitati.removeIf(criterio);
     }
 }
