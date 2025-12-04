@@ -122,3 +122,37 @@ Integration of `java.time.LocalDate` for RSVP tracking:
 - Date comparison with `.isAfter()` method
 - Null-safe date validation
 - Utility method `haRisposto()` for readability
+
+## Collections Framework II - HashSet, HashMap, Lambda, Predicate
+
+### HashSet for Email Uniqueness
+Prevents duplicate guest registrations using email-based uniqueness:
+- **HashSet<String> emailRegistrate** - O(1) lookup for duplicate detection
+- **equals() and hashCode()** - Implemented in Invitato class based on email
+- **aggiungiInvitato()** - Validates email uniqueness before adding guest
+
+### HashMap for Supplier Lookup
+Fast supplier retrieval by ID:
+- **HashMap<Integer, ServiziMatrimonio> mappaFornitori** - O(1) access by supplier ID
+- **Auto-increment ID system** - Each supplier gets unique ID via static counter
+- **cercaFornitorePerId(int id)** - Direct supplier lookup without iteration
+
+### Lambda Expressions and Functional Interfaces
+
+#### Custom Functional Interface
+**FiltroInvitato** - Custom functional interface for guest filtering:
+- Single abstract method: `boolean soddisfaCondizione(Invitato inv)`
+- **filtraInvitati(FiltroInvitato filtro)** - Accepts lambda expressions
+- **Use case**: `filtraInvitati(inv -> inv.isConfermato())` - Filter confirmed guests
+
+#### Built-in Predicate<T>
+**Predicate<Invitato>** - Java's built-in functional interface for conditional removal:
+- **rimuoviSe(Predicate<Invitato> criterio)** - Removes guests matching condition
+- **Use case**: `rimuoviSe(inv -> !inv.haRisposto())` - Remove non-responders
+- **Method reference support**: Works with lambda and method references
+
+### Benefits
+- **Performance**: O(1) operations for email validation and supplier lookup
+- **Type safety**: Compile-time checking with generics
+- **Code conciseness**: Lambda expressions reduce boilerplate
+- **Flexibility**: Both custom and built-in functional interfaces demonstrated
