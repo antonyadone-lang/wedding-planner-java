@@ -156,3 +156,93 @@ Fast supplier retrieval by ID:
 - **Type safety**: Compile-time checking with generics
 - **Code conciseness**: Lambda expressions reduce boilerplate
 - **Flexibility**: Both custom and built-in functional interfaces demonstrated
+
+## Stream API (Functional Programming)
+
+### Stream Pipeline Concept
+Streams provide a functional approach to processing collections through a pipeline of operations:
+- **Source** → Collection (e.g., `listaInvitati`)
+- **Intermediate Operations** → Transform data (filter, map, sorted) - lazy evaluation
+- **Terminal Operations** → Produce result (collect, count, sum) - trigger execution
+
+### Implemented Methods
+
+#### calcoloCostoServiziNonPagati()
+Calculates total cost of unpaid services using Stream API:
+- **filter()** → Select only unpaid services (`!isPagato()`)
+- **mapToDouble()** → Transform each service to its cost
+- **sum()** → Aggregate total cost
+- **Use case**: Financial tracking of pending payments
+
+#### getInvitatiPerTavolo(int numeroTavolo)
+Retrieves guests assigned to a specific table:
+- **filter()** → Exclude guests without table assignment (null check)
+- **filter()** → Select guests at requested table number
+- **collect(Collectors.toList())** → Gather results into new list
+- **Use case**: Table seating arrangement management
+
+### Benefits
+- **Conciseness**: Replaces verbose for-loops with declarative code
+- **Readability**: Clear intent through method names
+- **Performance**: Lazy evaluation optimizes processing
+- **Maintainability**: Functional style reduces bugs
+
+---
+
+## Exception Handling
+
+### Exception Hierarchy
+All exceptions inherit from `Throwable`:
+- **Error** → System-level problems (OutOfMemoryError) - should not be caught
+- **Exception** → Application-level problems - should be handled
+  - **Checked Exceptions** → Compiler-enforced handling (IOException)
+  - **Unchecked Exceptions** → Optional handling (RuntimeException subclasses)
+
+### File I/O with Exception Handling
+
+#### ImpostazioniMatrimonio Class
+Configuration class for wedding settings:
+- **Attributes**: `budgetMassimo`, `dataEvento`, `location`
+- **Purpose**: Store and manage wedding configuration data
+- **toString()**: Formatted output of settings
+
+#### caricaImpostazioni(String nomeFile)
+Loads wedding settings from file with comprehensive error handling:
+- **BufferedReader** → Efficient file reading with buffering
+- **FileReader** → Opens file for character-based reading
+- **try-catch-finally** → Ensures resource cleanup
+- **Multiple catch blocks** → Specific handling for FileNotFoundException and IOException
+- **Default values** → Returns fallback configuration on error
+- **throws IOException** → Delegates exception to caller
+
+### Custom Exceptions
+
+#### TavoloPienoException
+Custom checked exception for table capacity management:
+- **extends Exception** → Checked exception (compiler-enforced handling)
+- **Constructor**: Accepts custom error message
+- **Use case**: Thrown when attempting to assign guest to full table
+
+#### Implementation Pattern
+1. **Create exception class** → Extend Exception with message constructor
+2. **Throw exception** → Use `throw new TavoloPienoException(message)` when condition met
+3. **Declare in signature** → Add `throws TavoloPienoException` to method
+4. **Handle with try-catch** → Catch specific exception type in caller
+
+#### Modified Methods
+- **assegnaTavolo()** → Validates table capacity before assignment
+- **Tavolo.getCapacitaMassima()** → Returns maximum table capacity
+- **Tavolo.getNumeroOspiti()** → Returns current guest count
+
+### Exception Handling Keywords
+- **try** → Block containing code that may throw exceptions
+- **catch** → Block handling specific exception types
+- **finally** → Block always executed (resource cleanup)
+- **throw** → Explicitly throws an exception
+- **throws** → Declares method may throw exception (delegates to caller)
+
+### Benefits
+- **Robustness**: Graceful handling of error conditions
+- **Clarity**: Custom exceptions communicate domain-specific errors
+- **Maintainability**: Centralized error handling logic
+- **User experience**: Meaningful error messages instead of crashes
