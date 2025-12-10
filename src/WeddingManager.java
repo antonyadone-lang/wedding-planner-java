@@ -5,6 +5,11 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.time.LocalDate;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class WeddingManager {
     // ========== ATTRIBUTI ==========
@@ -27,9 +32,13 @@ public class WeddingManager {
     }
 
     // ========== METODI ==========
-    public void assegnaTavolo(Invitato invitato, Tavolo tavolo){
+    public void assegnaTavolo(Invitato invitato, Tavolo tavolo) throws TavoloPienoException{
+        if(tavolo.getNumeroOspiti() >= tavolo.getCapacitaMassima()){
+            throw new TavoloPienoException("Il Tavolo " + tavolo.getNumeroTavolo() + " è pieno! Capacità Massima: " + tavolo.getCapacitaMassima());
+        }
         boolean aggiunto = tavolo.aggiungiOspite(invitato);
         if(aggiunto){
+            invitato.setTavoloAssegnato(tavolo);
             System.out.println(invitato.getNome() + " assegnato al tavolo "+ tavolo.getNumeroTavolo());
         }else{
             System.out.println("Impossibile assegnare " + invitato.getNome() + " - Tavolo pieno!");
@@ -69,6 +78,13 @@ public class WeddingManager {
             totale += fornitore.calcoloCosto();
         }
         return totale;
+    }
+
+    public double calcoloCostoServiziNonPagati(){
+        return elencoFornitori.stream()
+                .filter(servizio -> !servizio.isPagato())
+                .mapToDouble(servizio -> servizio.calcoloCosto())
+        .sum();
     }
 
     public void mostraStatoTracciabili(){
@@ -124,5 +140,34 @@ public class WeddingManager {
 
     public void rimuoviSe(Predicate<Invitato> criterio){
         listaInvitati.removeIf(criterio);
+    }
+
+    public List<Invitato> getInvitatiPerTavolo (int numeroTavolo) {
+        return listaInvitati.stream()
+                .filter(inv -> inv.getTavoloAssegnato() !=null)
+                .filter(inv -> inv.getTavoloAssegnato().getNumeroTavolo() == numeroTavolo)
+                .collect(Collectors.toList());
+    }
+
+    public ImpostazioniMatrimonio caricaImpostazioni(String nomeFile) throws IOException{
+        BufferedReader reader = null;
+        try{
+            reader = new BufferedReader(new FileReader(nomeFile));
+            String rigaBudget = reader.readLine();
+            String rigaData = reader.readLine();
+            String rigaLocation = reader.readLine();
+            double budget = Double.parseDouble(rigaBudget);
+            return new ImpostazioniMatrimonio (budget, rigaData, rigaLocation);
+        }catch (FileNotFoundException e) {
+            System.out.println("ERRORE: File non trovato -" + nomeFile);
+            return new ImpostazioniMatrimonio (50000.0, "Non Impostata", "Non Impostata");
+        }catch (IOException e){
+            System.out.println("ERRORE: Impossibile leggere il file -" + nomeFile);
+            return new ImpostazioniMatrimonio (50000.0, "Non Impostata", "Non Impostata");
+        }finally {
+            if (reader != null){
+                reader.close();
+            }
+        }
     }
 }

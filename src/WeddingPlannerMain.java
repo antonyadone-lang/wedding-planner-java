@@ -1,9 +1,11 @@
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDate;
+import java.io.IOException;
 
 public class WeddingPlannerMain {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // ========== CREAZIONE INVITATI E TESTIMONI ==========
         Invitato invitato1 = new Invitato("Mario", "Rossi", "mario.rossi@gmail.com");
         Invitato invitato2 = new Invitato("Rosa","Bianco", "rosa.bianco@yahoo.com");
@@ -31,9 +33,14 @@ public class WeddingPlannerMain {
         weddingManager.aggiungiInvitato(testimone1);
 
         // ========== ASSEGNAZIONE TAVOLI ==========
-        weddingManager.assegnaTavolo(invitato1, tavolo2);
-        weddingManager.assegnaTavolo(invitato2, tavolo4);
-        weddingManager.assegnaTavolo(invitato3, tavolo4);
+        try {
+            weddingManager.assegnaTavolo(invitato1, tavolo2);
+            weddingManager.assegnaTavolo(invitato2, tavolo4);
+            weddingManager.assegnaTavolo(invitato3, tavolo4);
+            weddingManager.assegnaTavolo(testimone1, tavolo2);
+        }catch(TavoloPienoException e) {
+            System.out.println("ERRORE: " + e.getMessage());
+        }
 
         // ========== TEST POLIMORFISMO (presentati) ==========
         testimone1.presentati();
@@ -63,6 +70,23 @@ public class WeddingPlannerMain {
         double costoLordo = weddingManager.calcolaTotaleLordo();
         System.out.println("Costo Lordo matrimonio: €" + costoLordo);
         System.out.println("Costo totale matrimonio: €" + costoTotale);
+
+        // ========== TEST STREAM API (Costo Servizi non Pagati) ==========
+        System.out.println("\n=== TEST STREAM API - Servizi Non PAgati ===");
+        fotografo1.setPagato(true);
+        dj1.setPagato(true);
+        double costoNonPagati = weddingManager.calcoloCostoServiziNonPagati();
+        System.out.println("Costo Servizi non pagati: €" +  costoNonPagati);
+
+        // ========== TEST STREAM API (Invitati per tavolo) ==========
+        System.out.println("\n=== TEST STREAM API - Invitati per tavolo ===");
+        List<Invitato> invitatiTavolo4 = weddingManager.getInvitatiPerTavolo(4);
+        System.out.println("Invitati al Tavolo 4:");
+        weddingManager.stampaNomi(invitatiTavolo4);
+        List<Invitato> invitatiTavolo2 = weddingManager.getInvitatiPerTavolo(2);
+        System.out.println("Invitati al Tavolo 2:");
+        weddingManager.stampaNomi(invitatiTavolo2);
+
 
         // ========== GESTIONE TRACCIABILI (interface) ==========
         weddingManager.aggiungiTracciabile(fiorista1);
@@ -181,5 +205,29 @@ public class WeddingPlannerMain {
         System.out.println("Invitati rimanenti:");
         weddingManager.stampaNomi(weddingManager.getListaInvitati());
 
+        // ========== TEST EXCEPTION HANDLING - Carica Impostazioni ===
+        System.out.println("\n=== TEST EXCEPTION HANDLING ===");
+        ImpostazioniMatrimonio impostazioni1 = weddingManager.caricaImpostazioni("impostazioni.txt");
+        System.out.println(impostazioni1);
+        System.out.println("");
+        System.out.println("Test file inesistente");
+        ImpostazioniMatrimonio impostazioni2 = weddingManager.caricaImpostazioni("file_inesistente.txt");
+        System.out.println(impostazioni2);
+
+        // ========== TEST CUSTOM EXCEPTION (TavoloPienoException) ==========
+        System.out.println("\n=== TEST CUSTOM EXCEPTION - Tavolo Pieno ===");
+        Tavolo tavolotest = new Tavolo(99, 1);
+        Invitato test1 = new Invitato("Test1", "Uno", "test1@test.com");
+        Invitato test2 = new Invitato("Test2", "Due", "test2@test.com");
+        try{
+            System.out.println("Tentativo 1: Assegno primo invitato");
+            weddingManager.assegnaTavolo(test1, tavolotest); // OK
+
+            System.out.println("Tentativo 2: Assegno secondo invitato");
+            weddingManager.assegnaTavolo(test2, tavolotest);
+        }catch(TavoloPienoException e){
+            System.out.println("Eccezione catturata correttamente");
+            System.out.println("Messaggio: " + e.getMessage());
+        }
     }
 }

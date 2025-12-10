@@ -19,5 +19,12 @@ public class Tavolo {
             return false;
         }
     }
-    public int getNumeroTavolo() {return numeroTavolo;}
+    public int getNumeroTavolo() {
+        return numeroTavolo;}
+    public int getCapacitaMassima(){
+        return capacitaMassima;
+    }
+    public int getNumeroOspiti(){
+        return listaOspiti.size();
+    }
 }

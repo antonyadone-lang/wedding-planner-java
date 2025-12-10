@@ -4,12 +4,14 @@ public abstract class ServiziMatrimonio {
     protected String contatto;
     protected static int contatoreServizi = 0;
     protected final int idServizio;
+    protected boolean pagato;
 
     //Costruttore
     public ServiziMatrimonio(String nomeFornitore, String contatto){
         this.nomeFornitore = nomeFornitore;
         this.contatto = contatto;
         this.idServizio = ++contatoreServizi;
+        this.pagato = false;
     }
 
     //Metodi
@@ -28,7 +30,14 @@ public abstract class ServiziMatrimonio {
         return contatto;}
 
     public int getIdServizio() {
-        return idServizio;
+        return idServizio;}
+
+    public boolean isPagato(){
+        return pagato;
+    }
+    //setter
+    public void setPagato(boolean pagato){
+        this.pagato = pagato;
     }
 
 }

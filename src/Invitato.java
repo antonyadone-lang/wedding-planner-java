@@ -9,6 +9,7 @@ public class Invitato {
     private static int contatoreInvitati = 0;
     private final int idInvitato;
     private LocalDate dataRisposta;
+    private Tavolo tavoloAssegnato;
 
     // ========== COSTRUTTORE ==========
     public Invitato(String nome, String cognome, String email){
@@ -76,5 +77,14 @@ public class Invitato {
     @Override
     public int hashCode(){
         return email.hashCode();
+    }
+
+    //Getter
+    public Tavolo getTavoloAssegnato(){
+        return tavoloAssegnato;
+    }
+    //Setter
+    public void setTavoloAssegnato(Tavolo tavolo){
+        this.tavoloAssegnato = tavolo;
     }
 }
