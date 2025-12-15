@@ -1,15 +1,16 @@
 public class Fotografo extends ServiziMatrimonio {
     //Attributi specififici;
-    private double costoPacchetto;
+    private final double costoPacchetto;
 
     //Costruttore
-    public Fotografo(String nomeFornitore, String contatto, double costoPacchetto){
+    public Fotografo(String nomeFornitore, String contatto, double costoPacchetto) {
         super(nomeFornitore, contatto);
         this.costoPacchetto = costoPacchetto;
     }
+
     //implementazione metodo astratto;
     @Override
-    public double calcoloCosto(){
+    public double calcoloCosto() {
         return costoPacchetto;
     }
 }

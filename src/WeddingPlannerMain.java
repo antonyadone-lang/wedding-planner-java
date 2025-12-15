@@ -1,16 +1,15 @@
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
 import java.time.LocalDate;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WeddingPlannerMain {
-    public static void main(String[] args) throws IOException {
+    static void main(String[] args) throws IOException, ClassNotFoundException {
         // ========== CREAZIONE INVITATI E TESTIMONI ==========
         Invitato invitato1 = new Invitato("Mario", "Rossi", "mario.rossi@gmail.com");
-        Invitato invitato2 = new Invitato("Rosa","Bianco", "rosa.bianco@yahoo.com");
-        Invitato invitato3 = new Invitato("Luca","Dimuccio", "luca.dimuccio@gmail.com");
-        Testimone testimone1 = new Testimone("Lisa","Lisi", "lisa.lisi@gmail.com",true );
+        Invitato invitato2 = new Invitato("Rosa", "Bianco", "rosa.bianco@yahoo.com");
+        Invitato invitato3 = new Invitato("Luca", "Dimuccio", "luca.dimuccio@gmail.com");
+        Testimone testimone1 = new Testimone("Lisa", "Lisi", "lisa.lisi@gmail.com", true);
 
         // ========== CREAZIONE COMPITI ==========
         Compiti compito1 = new Compiti("Invia inviti");
@@ -21,7 +20,7 @@ public class WeddingPlannerMain {
         Tavolo tavolo1 = new Tavolo(1, 12);
         Tavolo tavolo2 = new Tavolo(2, 10);
         Tavolo tavolo3 = new Tavolo(3, 14);
-        Tavolo tavolo4 = new Tavolo(4,1);
+        Tavolo tavolo4 = new Tavolo(4, 1);
 
         // ========== INIZIALIZZAZIONE WEDDING MANAGER ==========
         WeddingManager weddingManager = new WeddingManager();
@@ -38,7 +37,7 @@ public class WeddingPlannerMain {
             weddingManager.assegnaTavolo(invitato2, tavolo4);
             weddingManager.assegnaTavolo(invitato3, tavolo4);
             weddingManager.assegnaTavolo(testimone1, tavolo2);
-        }catch(TavoloPienoException e) {
+        } catch (TavoloPienoException e) {
             System.out.println("ERRORE: " + e.getMessage());
         }
 
@@ -47,14 +46,14 @@ public class WeddingPlannerMain {
         invitato1.presentati();
 
         // ========== CREAZIONE FORNITORI ==========
-        Fiorista fiorista1 = new Fiorista("Fiori Felici","fiori.felici@gmail.com",550,80);
-        Fotografo fotografo1 = new Fotografo("Photo service","photo.service@yahoo.com",3000);
-        Dj dj1 = new Dj("Agenzia Divertiamoci","divertiamoci@gmail.com", 2500);
-        Catering catering1 = new Catering("Catering Service", "service.catering@gmail.com",200, 100);
+        Fiorista fiorista1 = new Fiorista("Fiori Felici", "fiori.felici@gmail.com", 550, 80);
+        Fotografo fotografo1 = new Fotografo("Photo service", "photo.service@yahoo.com", 3000);
+        Dj dj1 = new Dj("Agenzia Divertiamoci", "divertiamoci@gmail.com", 2500);
+        Catering catering1 = new Catering("Catering Service", "service.catering@gmail.com", 200, 100);
 
         // ========== TEST ARRAY E POLIMORFISMO FORNITORI ==========
         ServiziMatrimonio[] fornitori = {fiorista1, fotografo1, dj1, catering1};
-        for(ServiziMatrimonio fornitore : fornitori){
+        for (ServiziMatrimonio fornitore : fornitori) {
             fornitore.scheda();
             System.out.println("---");
         }
@@ -76,7 +75,7 @@ public class WeddingPlannerMain {
         fotografo1.setPagato(true);
         dj1.setPagato(true);
         double costoNonPagati = weddingManager.calcoloCostoServiziNonPagati();
-        System.out.println("Costo Servizi non pagati: €" +  costoNonPagati);
+        System.out.println("Costo Servizi non pagati: €" + costoNonPagati);
 
         // ========== TEST STREAM API (Invitati per tavolo) ==========
         System.out.println("\n=== TEST STREAM API - Invitati per tavolo ===");
@@ -108,10 +107,10 @@ public class WeddingPlannerMain {
         // ========== TEST STATIC E FINAL ==========
         System.out.println("\n=== CONTATORE INVITATI ===");
         System.out.println("Totale invitati: " + Invitato.getTotaleInvitati());
-        System.out.println("Nome: " + invitato1.getNome() + " Cognome: " + invitato1.getCognome() +  " ID: " + invitato1.getIdInvitato());
-        System.out.println("Nome: " + invitato2.getNome() + " Cognome: " + invitato2.getCognome() +  " ID: " + invitato2.getIdInvitato());
-        System.out.println("Nome: " + invitato3.getNome() + " Cognome: " + invitato3.getCognome() +  " ID: " + invitato3.getIdInvitato());
-        System.out.println("Nome: " + testimone1.getNome() + " Cognome: " + testimone1.getCognome() +  " ID: " + testimone1.getIdInvitato());
+        System.out.println("Nome: " + invitato1.getNome() + " Cognome: " + invitato1.getCognome() + " ID: " + invitato1.getIdInvitato());
+        System.out.println("Nome: " + invitato2.getNome() + " Cognome: " + invitato2.getCognome() + " ID: " + invitato2.getIdInvitato());
+        System.out.println("Nome: " + invitato3.getNome() + " Cognome: " + invitato3.getCognome() + " ID: " + invitato3.getIdInvitato());
+        System.out.println("Nome: " + testimone1.getNome() + " Cognome: " + testimone1.getCognome() + " ID: " + testimone1.getIdInvitato());
 
         // ========== TEST GENERICS (RisultatoOperazione) ==========
         System.out.println("\n=== TEST RICERCA INVITATO ===");
@@ -119,17 +118,17 @@ public class WeddingPlannerMain {
         // Test 1: Email esistente
         RisultatoOperazione<Invitato> risultato1 =
                 weddingManager.cercaInvitatoPerEmail("mario.rossi@gmail.com");
-        if(risultato1.isSuccesso()){
+        if (risultato1.isSuccesso()) {
             System.out.println("Trovato: " + risultato1.getDato().getNome() + " " + risultato1.getDato().getCognome());
-        }else {
+        } else {
             System.out.println(" " + risultato1.getMessaggioErrore());
         }
         // Test 2: Email non esistente
         RisultatoOperazione<Invitato> risultato2 =
                 weddingManager.cercaInvitatoPerEmail("test@gmail.com");
-        if(risultato2.isSuccesso()){
+        if (risultato2.isSuccesso()) {
             System.out.println("Trovato: " + risultato2.getDato().getNome());
-        }else {
+        } else {
             System.out.println(risultato2.getMessaggioErrore());
         }
         // ========== TEST WILDCARDS (Upper Bound) ==========
@@ -158,7 +157,7 @@ public class WeddingPlannerMain {
         invitato1.setDataRisposta(LocalDate.of(2025, 8, 20));
         invitato1.setConfermato(true);
         invitato2.setDataRisposta(null);
-        invitato3.setDataRisposta(LocalDate.of(2025,10,5));
+        invitato3.setDataRisposta(LocalDate.of(2025, 10, 5));
         testimone1.setDataRisposta(LocalDate.of(2025, 8, 15));
         testimone1.setConfermato(true);
         int rimossi = weddingManager.rimuoviInvitatiSenzaRSVP(dataLimite);
@@ -168,9 +167,9 @@ public class WeddingPlannerMain {
 
         // ========== TEST HASHSET (Duplicati) ==========
         System.out.println("\n=== TEST CONTROLLO DUPLICATI ===");
-        Invitato duplicato = new Invitato ("Giovanni", "Verdi", "mario.rossi@gmail.com");
+        Invitato duplicato = new Invitato("Giovanni", "Verdi", "mario.rossi@gmail.com");
         boolean aggiunto = weddingManager.aggiungiInvitato(duplicato);
-        if(!aggiunto){
+        if (!aggiunto) {
             System.out.println("Duplicato correttamente bloccato");
         }
 
@@ -209,7 +208,7 @@ public class WeddingPlannerMain {
         System.out.println("\n=== TEST EXCEPTION HANDLING ===");
         ImpostazioniMatrimonio impostazioni1 = weddingManager.caricaImpostazioni("impostazioni.txt");
         System.out.println(impostazioni1);
-        System.out.println("");
+        System.out.println();
         System.out.println("Test file inesistente");
         ImpostazioniMatrimonio impostazioni2 = weddingManager.caricaImpostazioni("file_inesistente.txt");
         System.out.println(impostazioni2);
@@ -219,15 +218,103 @@ public class WeddingPlannerMain {
         Tavolo tavolotest = new Tavolo(99, 1);
         Invitato test1 = new Invitato("Test1", "Uno", "test1@test.com");
         Invitato test2 = new Invitato("Test2", "Due", "test2@test.com");
-        try{
+        try {
             System.out.println("Tentativo 1: Assegno primo invitato");
             weddingManager.assegnaTavolo(test1, tavolotest); // OK
 
             System.out.println("Tentativo 2: Assegno secondo invitato");
             weddingManager.assegnaTavolo(test2, tavolotest);
-        }catch(TavoloPienoException e){
+        } catch (TavoloPienoException e) {
             System.out.println("Eccezione catturata correttamente");
             System.out.println("Messaggio: " + e.getMessage());
+        }
+        // ========== TEST SALVATAGGIO/CARICAMENTO CSV ==========
+        System.out.println("\n=== TEST SALVATAGGIO/CARICAMENTO CSV ===");
+
+        System.out.println("\n --- Creazione e Salvataggio ---");
+        Invitato csv1 = new Invitato("Paolo", "Giallo", "paolo.giallo@gmail.com");
+        csv1.setConfermato(true);
+        weddingManager.aggiungiInvitato(csv1);
+
+        Invitato csv2 = new Invitato("Marta", "Verde", "marta.verde@gmail.com");
+        csv2.setConfermato(false);
+        weddingManager.aggiungiInvitato(csv2);
+
+        Invitato csv3 = new Invitato("Giacomo", "Pinko", "giacomo.pinko@gmail.com");
+        csv3.setConfermato(true);
+        weddingManager.aggiungiInvitato(csv3);
+
+        weddingManager.salvaInvitatiSuFile("invitati.csv");
+
+        System.out.println("Lista invitati PRIMA dello svuotamento");
+        for (Invitato inv : weddingManager.getListaInvitati()) {
+            System.out.println(inv.getNome() + " " + inv.getCognome() + " - Confermato: " + inv.isConfermato());
+        }
+
+        System.out.println("\n--- Simulazione chiusura programma ---");
+        weddingManager.svuotaTutto();
+
+        System.out.println("Lista invitati DOPO lo svuotamento:");
+        if (weddingManager.getListaInvitati().isEmpty()) {
+            System.out.println("(Lista vuota - simulazione chiusura programma)");
+        }
+
+        weddingManager.caricaInvitatiDaFile("invitati.csv");
+
+        System.out.println("Lista invitati DOPO il caricamento:");
+        for (Invitato inv : weddingManager.getListaInvitati()) {
+            System.out.println(inv.getNome() + " " + inv.getCognome() + " - Confermato: " + inv.isConfermato());
+        }
+
+        // ========== TEST SERIALIZZAZIONE BINARIA ==========
+        System.out.println("\n=== TEST SERIALIZZAZIONE BINARIA ===");
+        System.out.println("Creazione e salvataggio binario");
+
+        Invitato bin1 = new Invitato("Anna", "Neri", "anna.neri@test.com");
+        bin1.setConfermato(true);
+        weddingManager.aggiungiInvitato(bin1);
+
+        Invitato bin2 = new Invitato("Marco", "Blu", "marco.blue@test.com");
+        bin2.setConfermato(false);
+        weddingManager.aggiungiInvitato(bin2);
+
+        Fotografo fotoTest = new Fotografo("Studio foto", "foto@test.com", 1500);
+        weddingManager.aggiungiFornitore(fotoTest);
+
+        Dj djTest = new Dj("DJ Music", "dj@test.com", 800);
+        weddingManager.aggiungiFornitore(djTest);
+
+        weddingManager.salvaDatiBinari("backup.dat");
+
+        System.out.println("Invitati in memoria: " + weddingManager.getListaInvitati().size());
+        System.out.println("Fornitori in memoria: " + weddingManager.cercaFornitorePerId(fotoTest.getIdServizio()).getNomeFornitore());
+
+        System.out.println("\n=== Simulazione Chiusura programma ===");
+
+        weddingManager.getListaInvitati().clear();
+        weddingManager.svuotaTutto();
+
+        System.out.println("Invitati dopo svuotamento: " + weddingManager.getListaInvitati().size());
+        if (weddingManager.getListaInvitati().isEmpty()) {
+            System.out.println("Liste vuote - simulazione chiusura programma");
+        }
+
+        System.out.println("\n=== Caricamento da File Binario ===");
+        weddingManager.caricaDatiBinari("backup.dat");
+        System.out.println("Invitati dopo caricamento: " + weddingManager.getListaInvitati().size());
+        System.out.println("Lista invitati:");
+        for (Invitato inv : weddingManager.getListaInvitati()) {
+            System.out.println("  -  " + inv.getNome() + " " + inv.getCognome());
+        }
+
+        System.out.println("\n=== TEST RICOSTRUZIONE HASHMAP ===");
+        ServiziMatrimonio fornitoreRecuperato = weddingManager.cercaFornitorePerId(fotoTest.getIdServizio());
+        if (fornitoreRecuperato != null) {
+            System.out.println("Hashmap ricostruita correttamente!");
+            System.out.println("Fornitore trovato per ID " + fotoTest.getIdServizio());
+            System.out.println("Costo: €" + fornitoreRecuperato.calcoloCosto());
+        } else {
+            System.out.println("Errore: Hashmap non ricostruita");
         }
     }
 }

@@ -1,5 +1,5 @@
-public class TavoloPienoException extends Exception{
-    public TavoloPienoException(String message){
+public class TavoloPienoException extends Exception {
+    public TavoloPienoException(String message) {
         super(message);
     }
 }

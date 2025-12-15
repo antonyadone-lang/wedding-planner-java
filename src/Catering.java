@@ -1,10 +1,10 @@
-public class Catering extends ServiziMatrimonio{
+public class Catering extends ServiziMatrimonio {
     //Attributi;
-    private double costoPerPersona;
-    private int numeroPersone;
+    private final double costoPerPersona;
+    private final int numeroPersone;
 
     //Costruttore
-    public Catering (String nomeFornitore,String contatto,double costoPerPersona,int numeroPersone){
+    public Catering(String nomeFornitore, String contatto, double costoPerPersona, int numeroPersone) {
         super(nomeFornitore, contatto);
         this.costoPerPersona = costoPerPersona;
         this.numeroPersone = numeroPersone;
@@ -12,7 +12,7 @@ public class Catering extends ServiziMatrimonio{
 
     //metodi
     @Override
-    public double calcoloCosto(){
+    public double calcoloCosto() {
         return costoPerPersona * numeroPersone;
     }
 }

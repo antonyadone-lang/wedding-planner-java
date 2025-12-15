@@ -1,18 +1,19 @@
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Invitato {
-    // ========== ATTRIBUTI ==========
-    private String nome;
-    private String cognome;
-    private String email;
-    private boolean confermato;
+public class Invitato implements Serializable {
     private static int contatoreInvitati = 0;
     private final int idInvitato;
+    // ========== ATTRIBUTI ==========
+    private final String nome;
+    private final String cognome;
+    private final String email;
+    private boolean confermato;
     private LocalDate dataRisposta;
     private Tavolo tavoloAssegnato;
 
     // ========== COSTRUTTORE ==========
-    public Invitato(String nome, String cognome, String email){
+    public Invitato(String nome, String cognome, String email) {
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
@@ -20,10 +21,15 @@ public class Invitato {
         this.idInvitato = ++contatoreInvitati;
     }
 
+    public static int getTotaleInvitati() {
+        return contatoreInvitati;
+    }
+
     // ========== METODI==========
-    public void presentati(){
+    public void presentati() {
         System.out.println("Ciao sono " + nome + " " + cognome);
     }
+
     public String getNome() {
         return nome;
     }
@@ -36,7 +42,7 @@ public class Invitato {
         return email;
     }
 
-    public int getIdInvitato(){
+    public int getIdInvitato() {
         return idInvitato;
     }
 
@@ -48,24 +54,20 @@ public class Invitato {
         this.confermato = confermato;
     }
 
-    public static int getTotaleInvitati() {
-        return contatoreInvitati;
-    }
-
     public LocalDate getDataRisposta() {
         return dataRisposta;
     }
 
-    public void setDataRisposta(LocalDate dataRisposta){
+    public void setDataRisposta(LocalDate dataRisposta) {
         this.dataRisposta = dataRisposta;
     }
 
-    public boolean haRisposto(){
+    public boolean haRisposto() {
         return dataRisposta != null;
     }
 
     @Override
-    public boolean equals(Object obj){
+    public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
@@ -75,16 +77,17 @@ public class Invitato {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return email.hashCode();
     }
 
     //Getter
-    public Tavolo getTavoloAssegnato(){
+    public Tavolo getTavoloAssegnato() {
         return tavoloAssegnato;
     }
+
     //Setter
-    public void setTavoloAssegnato(Tavolo tavolo){
+    public void setTavoloAssegnato(Tavolo tavolo) {
         this.tavoloAssegnato = tavolo;
     }
 }
