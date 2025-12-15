@@ -246,3 +246,160 @@ Custom checked exception for table capacity management:
 - **Clarity**: Custom exceptions communicate domain-specific errors
 - **Maintainability**: Centralized error handling logic
 - **User experience**: Meaningful error messages instead of crashes
+
+## File I/O and Persistence
+
+### Try-with-Resources Pattern
+Modern resource management that automatically closes resources:
+- **Syntax**: `try (Resource r = new Resource()) { }`
+- **Benefits**: Automatic resource cleanup, no need for finally block
+- **Implements**: AutoCloseable interface
+
+### CSV File Operations
+Text-based data persistence for human-readable storage:
+
+#### salvaInvitatiSuFile(String nomeFile)
+Saves guest list to CSV file:
+- **BufferedWriter** → Efficient character-based writing
+- **Format**: `nome,cognome,email,confermato`
+- **Use case**: Export guest list for external tools
+
+#### caricaInvitatiDaFile(String nomeFile)
+Loads guest list from CSV file:
+- **BufferedReader** → Efficient line-by-line reading
+- **String.split(",")** → Parse CSV format
+- **Reconstruction**: Creates new Invitato objects from data
+
+#### svuotaTutto()
+Clears both listaInvitati and emailRegistrate:
+- **Encapsulation**: Single method to clear related data structures
+- **Use case**: Simulate program closure or reset state
+
+### Benefits
+- **Portability**: CSV files readable by Excel, Google Sheets, etc.
+- **Debugging**: Human-readable format for inspection
+- **Interoperability**: Easy data exchange with other systems
+
+## Object Serialization
+
+### Serializable Interface
+Marker interface enabling object serialization:
+- No methods to implement
+- Signals JVM that class can be serialized
+- Subclasses automatically inherit serialization capability
+
+### Implemented Classes
+- Invitato implements Serializable
+- ServiziMatrimonio implements Serializable (all subclasses inherit)
+
+### Binary File I/O
+
+#### salvaDatiBinari(String nomeFile)
+Saves complete WeddingManager state to binary file:
+- ObjectOutputStream serializes Java objects
+- Preserves: listaInvitati, listaTavoli, elencoFornitori
+- Format: Binary (not human-readable)
+- Use case: Complete application state backup
+
+#### caricaDatiBinari(String nomeFile)
+Loads complete WeddingManager state from binary file:
+- ObjectInputStream deserializes Java objects
+- Type casting required after readObject()
+- Order matters: Read objects in same order as written
+
+### Derived Data Structure Reconstruction
+After deserialization, HashMap and HashSet must be rebuilt:
+
+emailRegistrate (HashSet) reconstruction:
+- Clear existing HashSet
+- Loop through listaInvitati
+- Add each email to HashSet
+
+mappaFornitori (HashMap) reconstruction:
+- Clear existing HashMap
+- Loop through elencoFornitori
+- Put each supplier with ID as key
+
+### CSV vs Serialization Comparison
+
+CSV:
+- Format: Text (human-readable)
+- Speed: Slower
+- Size: Larger
+- Portability: Cross-platform
+- Use case: Simple data, interoperability
+
+Serialization:
+- Format: Binary (compact)
+- Speed: Faster
+- Size: Smaller
+- Portability: Java-only
+- Use case: Complete object graphs
+
+### Benefits
+- Complete state preservation: Entire object graph saved
+- Type safety: Objects restored with correct types
+- Efficiency: Binary format faster than text parsing
+- Simplicity: No manual parsing or formatting required
+
+## Code Quality and Documentation
+
+### Javadoc Documentation
+Professional API documentation using Javadoc comments with special tags:
+- @param describes method parameters
+- @return describes return value
+- @throws describes exceptions thrown
+
+Documented Methods:
+- assegnaTavolo() - Table assignment with capacity validation
+- aggiungiInvitato() - Guest addition with email uniqueness check
+- cercaInvitatoPerEmail() - Guest search with generic result wrapper
+- rimuoviInvitatiSenzaRSVP() - Iterator-based safe removal
+- caricaImpostazioni() - File I/O with exception handling
+- salvaDatiBinari() - Binary serialization
+- caricaDatiBinari() - Binary deserialization with reconstruction
+
+### Professional Error Handling
+
+#### System.err vs System.out
+Separate error output stream for better visibility:
+- System.out: Normal program output (black text)
+- System.err: Error messages (red text in IDE)
+- Benefit: Errors immediately visible, can be redirected separately
+
+Error messages include:
+- Clear error description
+- Detailed cause with e.getMessage()
+
+### Import Management
+
+#### Explicit Imports
+Professional code style using explicit imports instead of wildcards:
+- Wildcard: import java.util.* (imports everything)
+- Explicit: import java.util.ArrayList; (imports only what needed)
+
+Benefits:
+- Clarity: See exactly which classes are used
+- No conflicts: Avoid ambiguous class names
+- Best practice: Google Java Style Guide recommendation
+
+### Code Formatting
+Professional code organization following Java conventions:
+- Indentation: 4 spaces consistent throughout
+- Spacing: Spaces around operators
+- Braces: Opening brace on same line, closing on new line
+- Line length: Maximum 120 characters
+- Import order: Alphabetical within package groups
+
+### Final Keyword
+Immutability for collection references:
+- Applied to: emailRegistrate, mappaFornitori, listaTracciabili
+- Meaning: Reference cannot be reassigned (content can change)
+- Benefit: Prevents accidental reassignment, clearer intent
+- Use case: Collections initialized once in constructor
+
+### IDE Configuration
+IntelliJ IDEA settings for professional code style:
+- Import threshold: 999 (never use wildcards)
+- Code style: Java conventions
+- Shortcuts: CTRL+ALT+O (optimize imports), CTRL+ALT+L (reformat code)
