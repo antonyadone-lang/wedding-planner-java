@@ -398,8 +398,22 @@ Immutability for collection references:
 - Benefit: Prevents accidental reassignment, clearer intent
 - Use case: Collections initialized once in constructor
 
-### IDE Configuration
-IntelliJ IDEA settings for professional code style:
-- Import threshold: 999 (never use wildcards)
-- Code style: Java conventions
-- Shortcuts: CTRL+ALT+O (optimize imports), CTRL+ALT+L (reformat code)
+## Creational Design Patterns
+
+The project implements three core creational design patterns to manage object instantiation in a flexible, scalable, and maintainable way.
+
+### Singleton Pattern
+- **Class**: `WeddingManager`
+- **Purpose**: Ensures that only one instance of `WeddingManager` exists throughout the application, providing a single global point of access to coordinate the event.
+- **Implementation**: Achieved through a `private` constructor and a `public static synchronized getInstance()` method that handles lazy, thread-safe instantiation.
+
+### Builder Pattern
+- **Class**: `Invitato`
+- **Purpose**: Simplifies the creation of `Invitato` objects, which have several optional attributes (`dietaSpeciale`, `allergie`, `numeroTelefono`). It provides a readable, fluent API.
+- **Implementation**: A static inner `Builder` class within `Invitato` with method chaining (`return this`).
+
+### Factory Method Pattern
+- **Class**: `FornitoreFactory`
+- **Purpose**: Decouples the client code from the concrete implementation of suppliers (`ServiziMatrimonio` subclasses). It centralizes the logic for creating different types of suppliers.
+- **Implementation**: A factory class with a static method `creareFornitore()`. It takes a `TipoFornitore` enum to decide which object to instantiate (`Fotografo`, `Dj`, `Catering`, `Fiorista`) and uses `varargs` (`double...`) to handle varying constructor parameters.
+    
