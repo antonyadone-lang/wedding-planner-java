@@ -29,16 +29,31 @@ public class WeddingManager {
     private final ArrayList<Tracciabile> listaTracciabili;
     private final HashSet<String> emailRegistrate;
     private final HashMap<Integer, ServiziMatrimonio> mappaFornitori;
+    private static WeddingManager instance;
 
 
     // ========== COSTRUTTORE ==========
-    public WeddingManager() {
+    private WeddingManager() {
         this.listaInvitati = new ArrayList<>();
         this.listaTavoli = new ArrayList<>();
         this.elencoFornitori = new ArrayList<>();
         this.listaTracciabili = new ArrayList<>();
         this.emailRegistrate = new HashSet<>();
         this.mappaFornitori = new HashMap<>();
+    }
+
+    // ========== SINGLETON INSTANCE ==========
+    /**
+     * Restituisce l'unica istanza di WeddingManager (Singleton Pattern).
+     * Thread-safe grazie alla sincronizzazione.
+     *
+     * @return L'istanza singleton di WeddingManager.
+     */
+    public static synchronized WeddingManager getInstance(){
+        if(instance == null){
+            instance = new WeddingManager();
+        }
+        return instance;
     }
 
     // ========== METODI ==========

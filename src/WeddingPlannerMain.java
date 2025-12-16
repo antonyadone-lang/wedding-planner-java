@@ -23,7 +23,7 @@ public class WeddingPlannerMain {
         Tavolo tavolo4 = new Tavolo(4, 1);
 
         // ========== INIZIALIZZAZIONE WEDDING MANAGER ==========
-        WeddingManager weddingManager = new WeddingManager();
+        WeddingManager weddingManager = WeddingManager.getInstance();
 
         // Registra invitati nel manager
         weddingManager.aggiungiInvitato(invitato1);
@@ -52,7 +52,7 @@ public class WeddingPlannerMain {
         Catering catering1 = new Catering("Catering Service", "service.catering@gmail.com", 200, 100);
 
         // ========== TEST ARRAY E POLIMORFISMO FORNITORI ==========
-        ServiziMatrimonio[] fornitori = {fiorista1, fotografo1, dj1, catering1};
+        ServiziMatrimonio[] fornitori = {fiorista1, fotografo1, dj1, catering1}; // Questo array ora è ridondante, ma lo lasciamo per il test
         for (ServiziMatrimonio fornitore : fornitori) {
             fornitore.scheda();
             System.out.println("---");
@@ -316,5 +316,75 @@ public class WeddingPlannerMain {
         } else {
             System.out.println("Errore: Hashmap non ricostruita");
         }
+        // ========== TEST SINGLETON PATTERN ==========
+        System.out.println("\n=== TEST SINGLETON PATTERN ===");
+        WeddingManager manager2 = WeddingManager.getInstance();
+        System.out.println("Stessa istanza? " + (weddingManager == manager2));
+        System.out.println("HashCode manager1: " + weddingManager.hashCode());
+        System.out.println("HashCode manager2: " + manager2.hashCode());
+
+        // ========== TEST BUILDER PATTERN ==========
+        System.out.println("\n=== TEST BUILDER PATTERN ===");
+        Invitato builderTest1 = new Invitato.Builder("Fabrizio", "Signorini", "fabrizio.signorini@gmail.com")
+                .confermato(true)
+                .dietaSpeciale("Vegetariana")
+                .allergie("Glutine, Lattosio")
+                .numeroTelefono("+39 1234567890")
+                .build();
+        System.out.println("Invitato 1 (completo):");
+        System.out.println(" Nome: " + builderTest1.getNome() + " " + builderTest1.getCognome());
+        System.out.println(" Confermato: " + builderTest1.isConfermato());
+        System.out.println(" Dieta: " + builderTest1.getDietaSpeciale());
+        System.out.println(" Allergie: " + builderTest1.getAllergie());
+        System.out.println(" Telefono: " + builderTest1.getNumeroTelefono());
+
+        // ========== TEST FACTORY METHOD PATTERN ==========
+        System.out.println("\n=== TEST FACTORY METHOD PATTERN ===");
+
+        ServiziMatrimonio fotoFactory = FornitoreFactory.creareFornitore(
+                TipoFornitore.FOTOGRAFO,
+                "Studio Fotografico Elite",
+                "elite.foto@gmail.com",
+                2000
+        );
+
+        ServiziMatrimonio djFactory = FornitoreFactory.creareFornitore(
+                TipoFornitore.DJ,
+                "DJ party",
+                "djparty@gmail.com",
+                1200
+        );
+
+        ServiziMatrimonio cateringFactory = FornitoreFactory.creareFornitore(
+                TipoFornitore.CATERING,
+                "Catering Deluxe",
+                "cateringdeluxe@gmail.com",
+                60,
+                120
+        );
+
+        ServiziMatrimonio fioristaFactory = FornitoreFactory.creareFornitore(
+                TipoFornitore.FIORISTA,
+                "Fiori & co",
+                "infofiori@gmail.com",
+                600,
+                100
+        );
+
+        System.out.println("Fornitori creati con Factory:");
+        fotoFactory.scheda();
+        System.out.println("Costo: €" + fotoFactory.calcoloCosto());
+        System.out.println();
+
+        djFactory.scheda();
+        System.out.println("Costo: €" + djFactory.calcoloCosto());
+        System.out.println();
+
+        cateringFactory.scheda();
+        System.out.println("Costo: €" + cateringFactory.calcoloCosto());
+        System.out.println();
+
+        fioristaFactory.scheda();
+        System.out.println("Costo: €" + fioristaFactory.calcoloCosto());
     }
 }
