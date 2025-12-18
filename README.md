@@ -417,4 +417,21 @@ The project implements three core creational design patterns to manage object in
 - **Purpose**: Decouples the client code from the concrete implementation of suppliers (`ServiziMatrimonio` subclasses). It centralizes the logic for creating different types of suppliers.
 - **Implementation**: A factory class with a static method `creareFornitore()`. It takes a `TipoFornitore` enum to decide which object to instantiate (`Fotografo`, `Dj`, `Catering`, `Fiorista`) and uses `varargs` (`double...`) to handle varying constructor parameters.
 
+## Latest Updates
 
+### Strategy Pattern (Payment Management)
+* **Description:** Implemented the *Strategy Pattern* to handle various payment methods (e.g., Bank Transfer, Credit Card) dynamically.
+* **Benefits:**
+    * **Decoupling:** Separated the payment calculation logic from the core application classes.
+    * **Extensibility:** New payment methods can be added easily without modifying existing code (adhering to the Open/Closed Principle).
+
+### Multithreading & Safe AutoSave System
+* **Description:** Introduced an asynchronous **AutoSave** feature that runs in a background thread while the user interacts with the main menu.
+* **Technical Details & Safety:**
+    * **Runnable Interface:** Created the `AutoSaveTask` class to define the background execution logic.
+    * **Thread Safety:** Implemented the `volatile` keyword to ensure immediate visibility of the termination signal across different threads.
+    * **Graceful Shutdown:** Developed a clean exit strategy using `interrupt()` to wake the thread from its sleep cycle and `join()` to ensure the background process completes before the main application terminates.
+    * **Timing:** The background save cycle is synchronized to trigger every 10 seconds using `Thread.sleep()`.
+
+---
+*Note: This project is part of my professional growth in Java Development. It demonstrates my ability to handle design patterns and concurrent programming.*
