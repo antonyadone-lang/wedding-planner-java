@@ -112,9 +112,11 @@ public class Invitato implements Serializable {
     public String getAllergie(){
         return allergie;
     }
+
     public String getNumeroTelefono(){
         return numeroTelefono;
     }
+
     public static class Builder {
         private final String nome;
         private final String cognome;
@@ -154,4 +156,15 @@ public class Invitato implements Serializable {
             return new Invitato(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Invitato{" +
+                "nome='" + nome + '\'' +
+                ", cognome='" + cognome + '\'' +
+                ", email='" + email + '\'' +
+                ", statoConferma=" + confermato +
+                '}';
+    }
+
 }

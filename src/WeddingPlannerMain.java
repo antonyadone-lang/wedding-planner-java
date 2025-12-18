@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class WeddingPlannerMain {
     static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -71,7 +72,7 @@ public class WeddingPlannerMain {
         System.out.println("Costo totale matrimonio: €" + costoTotale);
 
         // ========== TEST STREAM API (Costo Servizi non Pagati) ==========
-        System.out.println("\n=== TEST STREAM API - Servizi Non PAgati ===");
+        System.out.println("\n=== TEST STREAM API - Servizi Non Pagati ===");
         fotografo1.setPagato(true);
         dj1.setPagato(true);
         double costoNonPagati = weddingManager.calcoloCostoServiziNonPagati();
@@ -386,5 +387,60 @@ public class WeddingPlannerMain {
 
         fioristaFactory.scheda();
         System.out.println("Costo: €" + fioristaFactory.calcoloCosto());
+
+        // ========== TEST STRATEGIE DI ORDINAMENTO ==========
+
+        // Test ordiamento per cognome
+        System.out.println("\n=== Ordinamento per cognome ===");
+        weddingManager.stampaListaInvitati(new OrdinamentoPerCognome());
+
+        // Test ordinamento per stato di conferma
+        System.out.println("\n=== Ordinamento per stato di conferma ===");
+        weddingManager.stampaListaInvitati(new OrdinamentoPerStato());
+
+        // ========== TEST MULTI THREAD ==========
+        System.out.println("\n=== TEST MULTI THREAD ===");
+        AutoSaveTask task = new AutoSaveTask();
+        Thread nuovoThread = new Thread(task);
+
+        nuovoThread.start();
+
+        Scanner scanner = new Scanner(System.in);
+        int scelta = -1;
+
+        System.out.println("--- Wedding Manager Pro ---");
+
+        while(scelta != 0) {
+            System.out.println("\nMenu:");
+            System.out.println("1. Aggiungi Invitato (Simulazione)");
+            System.out.println("0. Esci e ferma il sistema");
+            System.out.println("Scelta: ");
+
+            scelta = scanner.nextInt();
+            scanner.nextLine();
+
+            if (scelta == 1) {
+                System.out.println("Inserisci il nome: ");
+                String nome = scanner.nextLine();
+                System.out.println("Inserisci il cognome: ");
+                String cognome = scanner.nextLine();
+                System.out.println("Inserisci l'email: ");
+                String email = scanner.nextLine();
+
+                System.out.println("Invitato aggiunto correttamente!");
+            }else if (scelta != 0) {
+                System.out.println("Scelta non valida");
+            }
+        }
+        task.stopRunning();
+        nuovoThread.interrupt();
+        System.out.println("Sistema in chiusura...");
+
+        try {
+            nuovoThread.join();
+        }catch (InterruptedException e) {
+            System.out.println("Errore durante l'attesa del thread.");
+        }
+        System.out.println("Sistema terminato.");
     }
 }

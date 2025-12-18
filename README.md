@@ -416,4 +416,5 @@ The project implements three core creational design patterns to manage object in
 - **Class**: `FornitoreFactory`
 - **Purpose**: Decouples the client code from the concrete implementation of suppliers (`ServiziMatrimonio` subclasses). It centralizes the logic for creating different types of suppliers.
 - **Implementation**: A factory class with a static method `creareFornitore()`. It takes a `TipoFornitore` enum to decide which object to instantiate (`Fotografo`, `Dj`, `Catering`, `Fiorista`) and uses `varargs` (`double...`) to handle varying constructor parameters.
-    
+
+

@@ -303,4 +303,11 @@ public class WeddingManager {
         }
         System.out.println("Dati caricati da: " + nomeFile);
     }
+
+    public void stampaListaInvitati(OrdinamentoStrategy strategia){
+        List<Invitato> listaDaOrdinare = new ArrayList<>(this.listaInvitati);
+        List<Invitato> listaOrdinata = strategia.ordina(listaDaOrdinare);
+        System.out.println("--- Lista invitati ordinata con strategia: " + strategia.getClass().getSimpleName() + "---");
+        listaOrdinata.forEach(System.out::println);
+    }
 }
