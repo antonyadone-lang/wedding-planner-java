@@ -433,5 +433,17 @@ The project implements three core creational design patterns to manage object in
     * **Graceful Shutdown:** Developed a clean exit strategy using `interrupt()` to wake the thread from its sleep cycle and `join()` to ensure the background process completes before the main application terminates.
     * **Timing:** The background save cycle is synchronized to trigger every 10 seconds using `Thread.sleep()`.
 
+## Behavioral Design Patterns
+
+### Strategy Pattern
+The project implements the **Strategy Pattern** to handle interchangeable algorithms at runtime, specifically for sorting operations.
+
+- **Interface**: `OrdinamentoStrategy`
+- **Purpose**: Defines a common contract for sorting algorithms, allowing the `WeddingManager` to sort guests without knowing the specific implementation details.
+- **Implementations**:
+    - `OrdinamentoPerCognome`: Sorts guests alphabetically by surname.
+    - `OrdinamentoPerStato`: Sorts guests based on their RSVP confirmation status.
+- **Benefit**: Eliminates complex conditional logic (if/else or switch) inside the manager and allows adding new sorting criteria without modifying existing code (Open/Closed Principle).
+- **Example**:
 ---
 *Note: This project is part of my professional growth in Java Development. It demonstrates my ability to handle design patterns and concurrent programming.*
