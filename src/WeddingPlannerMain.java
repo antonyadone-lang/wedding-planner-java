@@ -400,7 +400,7 @@ public class WeddingPlannerMain {
 
         // ========== TEST MULTI THREAD ==========
         System.out.println("\n=== TEST MULTI THREAD ===");
-        AutoSaveTask task = new AutoSaveTask();
+        AutoSaveTask task = new AutoSaveTask(weddingManager);
         Thread nuovoThread = new Thread(task);
 
         nuovoThread.start();

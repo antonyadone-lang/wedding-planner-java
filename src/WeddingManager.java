@@ -79,7 +79,7 @@ public class WeddingManager {
         }
     }
 
-    public void aggiungiFornitore(ServiziMatrimonio fornitore) {
+    public synchronized void aggiungiFornitore(ServiziMatrimonio fornitore) {
         elencoFornitori.add(fornitore);
         mappaFornitori.put(fornitore.getIdServizio(), fornitore);
     }
@@ -94,7 +94,7 @@ public class WeddingManager {
      * @param invitato L'invitato da aggiungere.
      * @return true se l'invitato è stato aggiunto, false se l'email è già registrata.
      */
-    public boolean aggiungiInvitato(Invitato invitato) {
+    public synchronized boolean aggiungiInvitato(Invitato invitato) {
         if (emailRegistrate.contains(invitato.getEmail())) {
             System.err.println("ERRORE: email già registrata - " + invitato.getEmail());
             return false;
@@ -230,10 +230,14 @@ public class WeddingManager {
         }
     }
 
-    public void salvaInvitatiSuFile(String nomeFile) throws IOException {
+    public synchronized void salvaInvitatiSuFile(String nomeFile) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeFile))) {
             for (Invitato inv : listaInvitati) {
-                String rigaCSV = inv.getNome() + "," + inv.getCognome() + "," + inv.getEmail() + "," + inv.isConfermato();
+                String rigaCSV = String.format("%s,%s,%s,%b",
+                        inv.getNome(),
+                        inv.getCognome(),
+                        inv.getEmail(),
+                        inv.isConfermato());
                 writer.write(rigaCSV);
                 writer.newLine();
             }
@@ -246,6 +250,9 @@ public class WeddingManager {
             String riga;
             while ((riga = reader.readLine()) != null) {
                 String[] dati = riga.split(",");
+                if (dati.length < 4) {
+                    System.err.println("Attenzione: Riga CSV malformata ignorata -> " + riga);
+                }
                 String nome = dati[0];
                 String cognome = dati[1];
                 String email = dati[2];
@@ -258,7 +265,7 @@ public class WeddingManager {
         System.out.println("Invitati caricati da: " + nomeFile);
     }
 
-    public void svuotaTutto() {
+    public synchronized void svuotaTutto() {
         listaInvitati.clear();
         emailRegistrate.clear();
     }
