@@ -19,7 +19,8 @@ public class AutoSaveTask implements Runnable {
                     Thread.sleep(10 * 1000);
                     if(running) {
                         manager.salvaInvitatiSuFile("autosave_invitati.csv");
-                        System.out.println("[System] AutoSave: Backup su file completato con successo!");
+                        // Commentiamo la stampa per non disturbare l'input utente
+                        // System.out.println("[System] AutoSave: Backup su file completato con successo!");
                     }
         } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();

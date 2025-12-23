@@ -25,6 +25,7 @@ public class WeddingPlannerMain {
 
         // ========== INIZIALIZZAZIONE WEDDING MANAGER ==========
         WeddingManager weddingManager = WeddingManager.getInstance();
+        weddingManager.setBudgetMassimo(6000);
 
         // Registra invitati nel manager
         weddingManager.aggiungiInvitato(invitato1);
@@ -60,10 +61,15 @@ public class WeddingPlannerMain {
         }
 
         // ========== REGISTRAZIONE FORNITORI NEL MANAGER ==========
-        weddingManager.aggiungiFornitore(fiorista1);
-        weddingManager.aggiungiFornitore(fotografo1);
-        weddingManager.aggiungiFornitore(dj1);
-        weddingManager.aggiungiFornitore(catering1);
+        try{
+            weddingManager.aggiungiFornitore(fiorista1);
+            weddingManager.aggiungiFornitore(fotografo1);
+            weddingManager.aggiungiFornitore(dj1);
+            weddingManager.aggiungiFornitore(catering1);
+        } catch (BudgetSuperatoException e) {
+            System.out.println("\n--- ERRORE BUDGET ---");
+            System.out.println(e.getMessage());
+        }
 
         // ========== CALCOLO COSTI ==========
         double costoTotale = weddingManager.calcolaTotaleFornitori();
@@ -280,10 +286,15 @@ public class WeddingPlannerMain {
         weddingManager.aggiungiInvitato(bin2);
 
         Fotografo fotoTest = new Fotografo("Studio foto", "foto@test.com", 1500);
-        weddingManager.aggiungiFornitore(fotoTest);
 
         Dj djTest = new Dj("DJ Music", "dj@test.com", 800);
-        weddingManager.aggiungiFornitore(djTest);
+
+        try {
+            weddingManager.aggiungiFornitore(fotoTest);
+            weddingManager.aggiungiFornitore(djTest);
+        }catch (BudgetSuperatoException e) {
+            System.out.println("Errore aggiunta fornitori test binario: " + e.getMessage());
+        }
 
         weddingManager.salvaDatiBinari("backup.dat");
 
@@ -413,6 +424,7 @@ public class WeddingPlannerMain {
         while(scelta != 0) {
             System.out.println("\nMenu:");
             System.out.println("1. Aggiungi Invitato (Simulazione)");
+            System.out.println("2. Conferma Invitato");
             System.out.println("0. Esci e ferma il sistema");
             System.out.println("Scelta: ");
 
@@ -428,8 +440,17 @@ public class WeddingPlannerMain {
                 String email = scanner.nextLine();
 
                 System.out.println("Invitato aggiunto correttamente!");
+            }else if (scelta == 2) {
+                System.out.println("Inserisci l'email dell'invitato: ");
+                String emailDaConfermare = scanner.nextLine();
+                try {
+                    weddingManager.confermaInvitato(emailDaConfermare);
+                }catch (InvitatoNonTrovatoException e) {
+                    System.out.println("ERRORE: " + e.getMessage());
+                    System.out.println("Controlla la lista degli invitato e riprova.");
+                }
             }else if (scelta != 0) {
-                System.out.println("Scelta non valida");
+                System.out.println("Scelta non valida.");
             }
         }
         task.stopRunning();

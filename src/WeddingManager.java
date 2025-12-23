@@ -30,6 +30,7 @@ public class WeddingManager {
     private final HashSet<String> emailRegistrate;
     private final HashMap<Integer, ServiziMatrimonio> mappaFornitori;
     private static WeddingManager instance;
+    private double budgetMassimo;
 
 
     // ========== COSTRUTTORE ==========
@@ -79,7 +80,15 @@ public class WeddingManager {
         }
     }
 
-    public synchronized void aggiungiFornitore(ServiziMatrimonio fornitore) {
+    public void setBudgetMassimo(double budgetMassimo) {
+        this.budgetMassimo = budgetMassimo;
+    }
+
+    public synchronized void aggiungiFornitore(ServiziMatrimonio fornitore) throws BudgetSuperatoException {
+        double spesaFutura = calcolaTotaleLordo() + fornitore.calcoloCosto();
+        if (budgetMassimo > 0 && spesaFutura > budgetMassimo) {
+            throw new BudgetSuperatoException("Attenzione! Budget superato. Spesa prevista: €" + spesaFutura + " (Budget: €" + budgetMassimo + ")");
+        }
         elencoFornitori.add(fornitore);
         mappaFornitori.put(fornitore.getIdServizio(), fornitore);
     }
@@ -242,27 +251,37 @@ public class WeddingManager {
                 writer.newLine();
             }
         }
-        System.out.println("Invitati salvati su: " + nomeFile);
+        //Commentiamo la stampa per non disturbare l'input dell'utente
+        // System.out.println("Invitati salvati su: " + nomeFile);
     }
 
-    public void caricaInvitatiDaFile(String nomeFile) throws IOException {
+    public void caricaInvitatiDaFile(String nomeFile) {
         try (BufferedReader reader = new BufferedReader(new FileReader(nomeFile))) {
             String riga;
             while ((riga = reader.readLine()) != null) {
-                String[] dati = riga.split(",");
-                if (dati.length < 4) {
-                    System.err.println("Attenzione: Riga CSV malformata ignorata -> " + riga);
+                try {
+                    String[] dati = riga.split(",");
+
+                    if (dati.length < 4) {
+                        throw new DatiInvitatoException("Riga corrotta o incompleta: " + riga);
+                    }
+
+                    String nome = dati[0];
+                    String cognome = dati[1];
+                    String email = dati[2];
+                    boolean confermato = Boolean.parseBoolean(dati[3]);
+                    Invitato invitato = new Invitato(nome, cognome, email);
+                    invitato.setConfermato(confermato);
+                    aggiungiInvitato(invitato);
+
+                } catch (DatiInvitatoException e) {
+                    System.err.println("[LOG ERRORE] Salto riga non valida: " + e.getMessage());
                 }
-                String nome = dati[0];
-                String cognome = dati[1];
-                String email = dati[2];
-                boolean confermato = Boolean.parseBoolean(dati[3]);
-                Invitato invitato = new Invitato(nome, cognome, email);
-                invitato.setConfermato(confermato);
-                aggiungiInvitato(invitato);
             }
+            System.out.println("Invitati caricati da: " + nomeFile);
+        } catch (IOException e) {
+            System.err.println("Errore fatale nell'apertura del file: " + e.getMessage());
         }
-        System.out.println("Invitati caricati da: " + nomeFile);
     }
 
     public synchronized void svuotaTutto() {
@@ -317,4 +336,16 @@ public class WeddingManager {
         System.out.println("--- Lista invitati ordinata con strategia: " + strategia.getClass().getSimpleName() + "---");
         listaOrdinata.forEach(System.out::println);
     }
+
+    public synchronized void confermaInvitato(String email){
+        for (Invitato inv : listaInvitati) {
+            if (inv.getEmail().equalsIgnoreCase(email)) {
+                inv.setConfermato(true);
+                System.out.println("Invitato confermato: " + inv.getNome() + " " + inv.getCognome());
+                return;
+            }
+        }
+        throw new InvitatoNonTrovatoException(email);
+    }
+
 }
