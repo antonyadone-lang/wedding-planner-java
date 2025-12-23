@@ -444,6 +444,32 @@ The project implements the **Strategy Pattern** to handle interchangeable algori
     - `OrdinamentoPerCognome`: Sorts guests alphabetically by surname.
     - `OrdinamentoPerStato`: Sorts guests based on their RSVP confirmation status.
 - **Benefit**: Eliminates complex conditional logic (if/else or switch) inside the manager and allows adding new sorting criteria without modifying existing code (Open/Closed Principle).
-- **Example**:
+
+## Robustness and Custom Exceptions
+
+The project demonstrates a professional approach to error handling by defining domain-specific exceptions. This moves away from generic Java exceptions towards a "speaking code" architecture where errors describe business problems.
+
+### Custom Exception Hierarchy
+
+#### 1. Business Logic Exceptions (Checked)
+**`BudgetSuperatoException`**
+- **Type**: Checked Exception (`extends Exception`)
+- **Trigger**: Thrown when adding a supplier would exceed the defined wedding budget.
+- **Handling**: Forces the caller to decide whether to increase the budget or reject the supplier.
+
+#### 2. Data Integrity Exceptions (Checked)
+**`DatiInvitatoException`**
+- **Type**: Checked Exception (`extends Exception`)
+- **Trigger**: Thrown during CSV parsing when a line is malformed or missing required fields.
+- **Handling**: Used inside the parsing loop to skip specific corrupted lines while allowing the rest of the file to load successfully.
+
+#### 3. Runtime State Exceptions (Unchecked)
+**`InvitatoNonTrovatoException`**
+- **Type**: Unchecked Exception (`extends RuntimeException`)
+- **Trigger**: Thrown when searching/confirming a guest by email fails.
+- **Handling**: Caught at the UI level (Main) to show a friendly error message to the user.
+
+### Implementation Example
+How the `WeddingManager` enforces the budget constraint.
 ---
 *Note: This project is part of my professional growth in Java Development. It demonstrates my ability to handle design patterns and concurrent programming.*
