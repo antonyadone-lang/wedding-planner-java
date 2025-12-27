@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -23,11 +24,12 @@ import java.util.stream.Collectors;
  */
 public class WeddingManager {
     // ========== ATTRIBUTI ==========
+    private Map<String, Invitato> mappaInvitati;
     private ArrayList<Invitato> listaInvitati;
+    private HashSet<String> emailRegistrate;
     private ArrayList<Tavolo> listaTavoli;
     private ArrayList<ServiziMatrimonio> elencoFornitori;
     private final ArrayList<Tracciabile> listaTracciabili;
-    private final HashSet<String> emailRegistrate;
     private final HashMap<Integer, ServiziMatrimonio> mappaFornitori;
     private static WeddingManager instance;
     private double budgetMassimo;
@@ -35,12 +37,13 @@ public class WeddingManager {
 
     // ========== COSTRUTTORE ==========
     private WeddingManager() {
-        this.listaInvitati = new ArrayList<>();
         this.listaTavoli = new ArrayList<>();
+        this.listaInvitati = new ArrayList<>();
+        this.emailRegistrate = new HashSet<>();
         this.elencoFornitori = new ArrayList<>();
         this.listaTracciabili = new ArrayList<>();
-        this.emailRegistrate = new HashSet<>();
         this.mappaFornitori = new HashMap<>();
+        this.mappaInvitati = new HashMap<>();
     }
 
     // ========== SINGLETON INSTANCE ==========
@@ -104,12 +107,14 @@ public class WeddingManager {
      * @return true se l'invitato è stato aggiunto, false se l'email è già registrata.
      */
     public synchronized boolean aggiungiInvitato(Invitato invitato) {
-        if (emailRegistrate.contains(invitato.getEmail())) {
+        String emailKey = invitato.getEmail().toLowerCase();
+        if (mappaInvitati.containsKey(emailKey)) {
             System.err.println("ERRORE: email già registrata - " + invitato.getEmail());
             return false;
         }
         listaInvitati.add(invitato);
         emailRegistrate.add(invitato.getEmail());
+        mappaInvitati.put(emailKey, invitato);
         return true;
     }
 
@@ -151,11 +156,10 @@ public class WeddingManager {
      * @return RisultatoOperazione contenente l'invitato se trovato, altrimenti un messaggio di errore.
      */
     public RisultatoOperazione<Invitato> cercaInvitatoPerEmail(String email) {
-        for (Invitato inv : listaInvitati) {
-            if (inv.getEmail().equals(email)) {
+        Invitato inv = mappaInvitati.get(email.toLowerCase());
+            if (inv != null) {
                 return new RisultatoOperazione<>(inv);
             }
-        }
         return new RisultatoOperazione<>("Invitato con email " + email + " non trovato");
     }
 
@@ -179,6 +183,8 @@ public class WeddingManager {
             Invitato inv = iterator.next();
             if (inv.getDataRisposta() == null || inv.getDataRisposta().isAfter(dataLimite) || !inv.isConfermato()) {
                 iterator.remove();
+                emailRegistrate.remove(inv.getEmail());
+                mappaInvitati.remove(inv.getEmail().toLowerCase());
                 rimossi++;
             }
         }
@@ -319,8 +325,10 @@ public class WeddingManager {
             listaTavoli = (ArrayList<Tavolo>) ois.readObject();
             elencoFornitori = (ArrayList<ServiziMatrimonio>) ois.readObject();
             emailRegistrate.clear();
+            mappaInvitati.clear();
             for (Invitato inv : listaInvitati) {
                 emailRegistrate.add(inv.getEmail());
+                mappaInvitati.put(inv.getEmail().toLowerCase(), inv);
             }
             mappaFornitori.clear();
             for (ServiziMatrimonio serv : elencoFornitori) {
@@ -338,14 +346,12 @@ public class WeddingManager {
     }
 
     public synchronized void confermaInvitato(String email){
-        for (Invitato inv : listaInvitati) {
-            if (inv.getEmail().equalsIgnoreCase(email)) {
-                inv.setConfermato(true);
-                System.out.println("Invitato confermato: " + inv.getNome() + " " + inv.getCognome());
-                return;
+        Invitato inv = mappaInvitati.get(email.toLowerCase());
+            if (inv != null) {
+                throw new InvitatoNonTrovatoException(email);
             }
+            inv.setConfermato(true);
+        System.out.println("Invitato confermato: " + inv.getNome() + " " + inv.getCognome());
         }
-        throw new InvitatoNonTrovatoException(email);
-    }
 
 }
