@@ -471,5 +471,20 @@ The project demonstrates a professional approach to error handling by defining d
 
 ### Implementation Example
 How the `WeddingManager` enforces the budget constraint.
+
+## Technical Highlights & Refactoring
+
+### Data Structure Optimization (The "Big Switch")
+To improve performance and demonstrate advanced Java collections knowledge, the `WeddingManager` has been refactored to use a hybrid data structure approach:
+
+- **HashMap Implementation**: Transformed guest lookup from $O(n)$ (linear search) to **$O(1)$ (constant time)** using a `HashMap<String, Invitato>`. This ensures instant retrieval regardless of the guest list size.
+- **Synchronized Collections**: For educational demonstration, the system maintains synchronization between three distinct structures:
+  - `ArrayList`: Preserves insertion order.
+  - `HashSet`: Ensures unique email constraints.
+  - `HashMap`: Enables high-performance access by key (email).
+- **Key Methods**:
+  - `aggiungiInvitato()`: Updates all three collections atomically.
+  - `cercaInvitatoPerEmail()`: Leverages HashMap for instant results.
+  - `rimuoviInvitatiSenzaRSVP()`: Uses iterators to safely remove elements from all structures simultaneously.
 ---
 *Note: This project is part of my professional growth in Java Development. It demonstrates my ability to handle design patterns and concurrent programming.*
