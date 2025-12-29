@@ -486,5 +486,20 @@ To improve performance and demonstrate advanced Java collections knowledge, the 
   - `aggiungiInvitato()`: Updates all three collections atomically.
   - `cercaInvitatoPerEmail()`: Leverages HashMap for instant results.
   - `rimuoviInvitatiSenzaRSVP()`: Uses iterators to safely remove elements from all structures simultaneously.
+    
+  - ### Architecture & Design Patterns (Refactoring)
+
+To ensure scalability and maintainability, the project has undergone significant architectural improvements applying **SOLID principles**:
+
+- **Single Responsibility Principle (SRP)**:
+  - Extracted all file I/O operations from `WeddingManager` into a dedicated `GestoreFile` utility class.
+  - `WeddingManager` now focuses solely on business logic (guest management, budget, tables), delegating persistence tasks.
+
+- **Exception Hierarchy**:
+  - Introduced a centralized error handling strategy with a base class `WeddingException`.
+  - All domain-specific exceptions (e.g., `TavoloPienoException`, `InvitatoNonTrovatoException`) now extend `WeddingException`, allowing for unified error catching and handling in the main application flow.
+
+- **Code Organization**:
+  - Restructured `WeddingManager` using a standard layout (Attributes -> Singleton -> Business Logic -> Persistence -> Utils) to improve readability and navigation.
 ---
 *Note: This project is part of my professional growth in Java Development. It demonstrates my ability to handle design patterns and concurrent programming.*
