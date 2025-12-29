@@ -23,30 +23,46 @@ import java.util.stream.Collectors;
  * Coordina invitati, tavoli e fornitori di servizi.
  */
 public class WeddingManager {
-    // ========== ATTRIBUTI ==========
-    private Map<String, Invitato> mappaInvitati;
-    private ArrayList<Invitato> listaInvitati;
-    private HashSet<String> emailRegistrate;
+
+    // =================================================================================
+    // ATTRIBUTI
+    // =================================================================================
+    
+    // Singleton Instance
+    private static WeddingManager instance;
+
+    // Strutture Dati Invitati (Sincronizzate per scopo didattico)
+    private ArrayList<Invitato> listaInvitati;      // Accesso sequenziale/ordinato
+    private HashSet<String> emailRegistrate;        // Controllo duplicati
+    private Map<String, Invitato> mappaInvitati;    // Accesso diretto O(1)
+
+    // Altre Strutture Dati
     private ArrayList<Tavolo> listaTavoli;
     private ArrayList<ServiziMatrimonio> elencoFornitori;
-    private final ArrayList<Tracciabile> listaTracciabili;
     private final HashMap<Integer, ServiziMatrimonio> mappaFornitori;
-    private static WeddingManager instance;
+    private final ArrayList<Tracciabile> listaTracciabili;
+
+    // Impostazioni
     private double budgetMassimo;
 
 
-    // ========== COSTRUTTORE ==========
+    // =================================================================================
+    // COSTRUTTORE & SINGLETON
+    // =================================================================================
+
     private WeddingManager() {
-        this.listaTavoli = new ArrayList<>();
+        // Inizializzazione Invitati
         this.listaInvitati = new ArrayList<>();
         this.emailRegistrate = new HashSet<>();
-        this.elencoFornitori = new ArrayList<>();
-        this.listaTracciabili = new ArrayList<>();
-        this.mappaFornitori = new HashMap<>();
         this.mappaInvitati = new HashMap<>();
+        
+        // Inizializzazione Altri
+        this.listaTavoli = new ArrayList<>();
+        this.elencoFornitori = new ArrayList<>();
+        this.mappaFornitori = new HashMap<>();
+        this.listaTracciabili = new ArrayList<>();
     }
 
-    // ========== SINGLETON INSTANCE ==========
     /**
      * Restituisce l'unica istanza di WeddingManager (Singleton Pattern).
      * Thread-safe grazie alla sincronizzazione.
@@ -60,7 +76,130 @@ public class WeddingManager {
         return instance;
     }
 
-    // ========== METODI ==========
+
+    // =================================================================================
+    // GESTIONE INVITATI
+    // =================================================================================
+
+    /**
+     * Aggiunge un invitato mantenendo sincronizzate tutte le strutture dati (List, Set, Map).
+     *
+     * @param invitato L'invitato da aggiungere.
+     * @return true se l'invitato è stato aggiunto, false se l'email è già registrata.
+     */
+    public synchronized boolean aggiungiInvitato(Invitato invitato) {
+        String emailKey = invitato.getEmail().toLowerCase();
+        
+        // Controllo duplicati usando la Mappa
+        if (mappaInvitati.containsKey(emailKey)) {
+            System.err.println("ERRORE: email già registrata - " + invitato.getEmail());
+            return false;
+        }
+        
+        // Sincronizzazione: Aggiungo a tutte le strutture
+        listaInvitati.add(invitato);            // Aggiungo alla lista (mantiene ordine inserimento)
+        emailRegistrate.add(invitato.getEmail()); // Aggiungo al set (traccia email usate)
+        mappaInvitati.put(emailKey, invitato);    // Aggiungo alla mappa (per accesso rapido)
+        
+        return true;
+    }
+
+    /**
+     * Cerca un invitato tramite indirizzo email.
+     * Utilizza il metodo generico di ricerca su Mappa.
+     *
+     * @param email L'indirizzo email da cercare.
+     * @return RisultatoOperazione contenente l'invitato se trovato.
+     */
+    public RisultatoOperazione<Invitato> cercaInvitatoPerEmail(String email) {
+        Invitato inv = mappaInvitati.get(email.toLowerCase());
+        if (inv != null) {
+            return new RisultatoOperazione<>(inv);
+        }
+        return new RisultatoOperazione<>("Invitato con email " + email + " non trovato");
+    }
+
+    public synchronized void confermaInvitato(String email){
+        Invitato inv = mappaInvitati.get(email.toLowerCase());
+        
+        if (inv == null) {
+            throw new InvitatoNonTrovatoException(email);
+        }
+        
+        inv.setConfermato(true);
+        System.out.println("Invitato confermato: " + inv.getNome() + " " + inv.getCognome());
+    }
+
+    /**
+     * Rimuove gli invitati che non hanno confermato entro la data limite.
+     * Aggiorna tutte le strutture dati per mantenerle sincronizzate.
+     *
+     * @param dataLimite Data limite per la conferma RSVP.
+     * @return Numero di invitati rimossi.
+     */
+    public int rimuoviInvitatiSenzaRSVP(LocalDate dataLimite) {
+        int rimossi = 0;
+        Iterator<Invitato> iterator = listaInvitati.iterator();
+        while (iterator.hasNext()) {
+            Invitato inv = iterator.next();
+            if (inv.getDataRisposta() == null || inv.getDataRisposta().isAfter(dataLimite) || !inv.isConfermato()) {
+                iterator.remove(); // Rimuove dalla Lista
+                
+                // Sincronizzazione
+                emailRegistrate.remove(inv.getEmail());
+                mappaInvitati.remove(inv.getEmail().toLowerCase());
+                
+                rimossi++;
+            }
+        }
+        return rimossi;
+    }
+
+    public List<Invitato> filtraInvitati(FiltroInvitato filtro) {
+        List<Invitato> risultato = new ArrayList<>();
+        for (Invitato inv : listaInvitati) {
+            if (filtro.soddisfaCondizione(inv))
+                risultato.add(inv);
+        }
+        return risultato;
+    }
+
+    public void rimuoviSe(Predicate<Invitato> criterio) {
+        List<Invitato> daRimuovere = new ArrayList<>();
+        for (Invitato inv : listaInvitati) {
+            if (criterio.test(inv)) {
+                daRimuovere.add(inv);
+            }
+        }
+        
+        for (Invitato inv : daRimuovere) {
+            listaInvitati.remove(inv);
+            emailRegistrate.remove(inv.getEmail());
+            mappaInvitati.remove(inv.getEmail().toLowerCase());
+        }
+    }
+
+    public void stampaListaInvitati(OrdinamentoStrategy strategia){
+        List<Invitato> listaDaOrdinare = new ArrayList<>(this.listaInvitati);
+        List<Invitato> listaOrdinata = strategia.ordina(listaDaOrdinare);
+        System.out.println("--- Lista invitati ordinata con strategia: " + strategia.getClass().getSimpleName() + "---");
+        listaOrdinata.forEach(System.out::println);
+    }
+
+    public void stampaNomi(List<? extends Invitato> lista) {
+        for (Invitato inv : lista) {
+            System.out.println(inv.getNome() + " " + inv.getCognome());
+        }
+    }
+
+    public List<Invitato> getListaInvitati() {
+        return listaInvitati;
+    }
+
+
+    // =================================================================================
+    // GESTIONE TAVOLI
+    // =================================================================================
 
     /**
      * Assegna un invitato a un tavolo specifico.
@@ -83,9 +222,17 @@ public class WeddingManager {
         }
     }
 
-    public void setBudgetMassimo(double budgetMassimo) {
-        this.budgetMassimo = budgetMassimo;
+    public List<Invitato> getInvitatiPerTavolo(int numeroTavolo) {
+        return listaInvitati.stream()
+                .filter(inv -> inv.getTavoloAssegnato() != null)
+                .filter(inv -> inv.getTavoloAssegnato().getNumeroTavolo() == numeroTavolo)
+                .collect(Collectors.toList());
     }
+
+
+    // =================================================================================
+    // GESTIONE FORNITORI & BUDGET
+    // =================================================================================
 
     public synchronized void aggiungiFornitore(ServiziMatrimonio fornitore) throws BudgetSuperatoException {
         double spesaFutura = calcolaTotaleLordo() + fornitore.calcoloCosto();
@@ -96,26 +243,8 @@ public class WeddingManager {
         mappaFornitori.put(fornitore.getIdServizio(), fornitore);
     }
 
-    public void aggiungiTracciabile(Tracciabile tracciabile) {
-        listaTracciabili.add(tracciabile);
-    }
-
-    /**
-     * Aggiunge un invitato alla lista, verificando l'unicità dell'email.
-     *
-     * @param invitato L'invitato da aggiungere.
-     * @return true se l'invitato è stato aggiunto, false se l'email è già registrata.
-     */
-    public synchronized boolean aggiungiInvitato(Invitato invitato) {
-        String emailKey = invitato.getEmail().toLowerCase();
-        if (mappaInvitati.containsKey(emailKey)) {
-            System.err.println("ERRORE: email già registrata - " + invitato.getEmail());
-            return false;
-        }
-        listaInvitati.add(invitato);
-        emailRegistrate.add(invitato.getEmail());
-        mappaInvitati.put(emailKey, invitato);
-        return true;
+    public ServiziMatrimonio cercaFornitorePerId(int id) {
+        return mappaFornitori.get(id);
     }
 
     public double calcolaTotaleFornitori() {
@@ -143,164 +272,70 @@ public class WeddingManager {
                 .sum();
     }
 
+    public void setBudgetMassimo(double budgetMassimo) {
+        this.budgetMassimo = budgetMassimo;
+    }
+
+
+    // =================================================================================
+    // GESTIONE TRACCIABILI
+    // =================================================================================
+
+    public void aggiungiTracciabile(Tracciabile tracciabile) {
+        listaTracciabili.add(tracciabile);
+    }
+
     public void mostraStatoTracciabili() {
         for (Tracciabile tracciabile : listaTracciabili) {
             System.out.println("Stato: " + tracciabile.getStatoTracciamento());
         }
     }
 
-    /**
-     * cerca un invitato tramite indirizzo email.
-     *
-     * @param email L'indirizzo email da cercare.
-     * @return RisultatoOperazione contenente l'invitato se trovato, altrimenti un messaggio di errore.
-     */
-    public RisultatoOperazione<Invitato> cercaInvitatoPerEmail(String email) {
-        Invitato inv = mappaInvitati.get(email.toLowerCase());
-            if (inv != null) {
-                return new RisultatoOperazione<>(inv);
-            }
-        return new RisultatoOperazione<>("Invitato con email " + email + " non trovato");
-    }
 
-    public void stampaNomi(List<? extends Invitato> lista) {
-        for (Invitato inv : lista) {
-            System.out.println(inv.getNome() + " " + inv.getCognome());
-        }
-    }
+    // =================================================================================
+    // PERSISTENZA (FILE I/O)
+    // =================================================================================
 
-    /**
-     * Rimuove gli invitati che non hanno confermato entro la data limite.
-     * Utilizza un Iterator per rimozione sicura durante l'iterazione.
-     *
-     * @param dataLimite Data limite per la conferma RSVP.
-     * @return Numero di invitati rimossi.
-     */
-    public int rimuoviInvitatiSenzaRSVP(LocalDate dataLimite) {
-        int rimossi = 0;
-        Iterator<Invitato> iterator = listaInvitati.iterator();
-        while (iterator.hasNext()) {
-            Invitato inv = iterator.next();
-            if (inv.getDataRisposta() == null || inv.getDataRisposta().isAfter(dataLimite) || !inv.isConfermato()) {
-                iterator.remove();
-                emailRegistrate.remove(inv.getEmail());
-                mappaInvitati.remove(inv.getEmail().toLowerCase());
-                rimossi++;
-            }
-        }
-        return rimossi;
-    }
-
-    public List<Invitato> getListaInvitati() {
-        return listaInvitati;
-    }
-
-    public ServiziMatrimonio cercaFornitorePerId(int id) {
-        return mappaFornitori.get(id);
-    }
-
-    public List<Invitato> filtraInvitati(FiltroInvitato filtro) {
-        List<Invitato> risultato = new ArrayList<>();
-        for (Invitato inv : listaInvitati) {
-            if (filtro.soddisfaCondizione(inv))
-                risultato.add(inv);
-        }
-        return risultato;
-    }
-
-    public void rimuoviSe(Predicate<Invitato> criterio) {
-        listaInvitati.removeIf(criterio);
-    }
-
-    public List<Invitato> getInvitatiPerTavolo(int numeroTavolo) {
-        return listaInvitati.stream()
-                .filter(inv -> inv.getTavoloAssegnato() != null)
-                .filter(inv -> inv.getTavoloAssegnato().getNumeroTavolo() == numeroTavolo)
-                .collect(Collectors.toList());
-    }
+    // =================================================================================
+    // PERSISTENZA (FILE I/O) - DELEGATA A GESTOREFILE
+    // =================================================================================
 
     /**
      * Carica le impostazioni del matrimonio da file di testo.
-     * In caso di errore, restituisce valori predefiniti.
-     *
-     * @param nomeFile Il percorso del file da leggere.
-     * @return Oggetto ImpostazioniMatrimonio con i dati caricati o valori predefiniti.
-     * @throws IOException Se si verifica un errore durante la lettura del file.
+     * Delega la lettura a GestoreFile.
      */
     public ImpostazioniMatrimonio caricaImpostazioni(String nomeFile) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(nomeFile))) {
-            String rigaBudget = reader.readLine();
-            String rigaData = reader.readLine();
-            String rigaLocation = reader.readLine();
-            double budget = Double.parseDouble(rigaBudget);
-            return new ImpostazioniMatrimonio(budget, rigaData, rigaLocation);
-        } catch (FileNotFoundException e) {
-            System.err.println("ERRORE: File non trovato -" + nomeFile);
-            System.err.println("Causa: " + e.getMessage());
-            return new ImpostazioniMatrimonio(50000.0, "Non Impostata", "Non Impostata");
-        } catch (IOException e) {
-            System.err.println("ERRORE: Impossibile leggere il file -" + nomeFile);
-            System.err.println("Causa: " + e.getMessage());
-            return new ImpostazioniMatrimonio(50000.0, "Non Impostata", "Non Impostata");
-        }
-    }
-
-    public synchronized void salvaInvitatiSuFile(String nomeFile) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeFile))) {
-            for (Invitato inv : listaInvitati) {
-                String rigaCSV = String.format("%s,%s,%s,%b",
-                        inv.getNome(),
-                        inv.getCognome(),
-                        inv.getEmail(),
-                        inv.isConfermato());
-                writer.write(rigaCSV);
-                writer.newLine();
-            }
-        }
-        //Commentiamo la stampa per non disturbare l'input dell'utente
-        // System.out.println("Invitati salvati su: " + nomeFile);
-    }
-
-    public void caricaInvitatiDaFile(String nomeFile) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(nomeFile))) {
-            String riga;
-            while ((riga = reader.readLine()) != null) {
-                try {
-                    String[] dati = riga.split(",");
-
-                    if (dati.length < 4) {
-                        throw new DatiInvitatoException("Riga corrotta o incompleta: " + riga);
-                    }
-
-                    String nome = dati[0];
-                    String cognome = dati[1];
-                    String email = dati[2];
-                    boolean confermato = Boolean.parseBoolean(dati[3]);
-                    Invitato invitato = new Invitato(nome, cognome, email);
-                    invitato.setConfermato(confermato);
-                    aggiungiInvitato(invitato);
-
-                } catch (DatiInvitatoException e) {
-                    System.err.println("[LOG ERRORE] Salto riga non valida: " + e.getMessage());
-                }
-            }
-            System.out.println("Invitati caricati da: " + nomeFile);
-        } catch (IOException e) {
-            System.err.println("Errore fatale nell'apertura del file: " + e.getMessage());
-        }
-    }
-
-    public synchronized void svuotaTutto() {
-        listaInvitati.clear();
-        emailRegistrate.clear();
+        return GestoreFile.caricaImpostazioni(nomeFile);
     }
 
     /**
+     * Salva gli invitati su file CSV.
+     * Delega la scrittura a GestoreFile passando la lista corrente.
+     */
+    public synchronized void salvaInvitatiSuFile(String nomeFile) throws IOException {
+        GestoreFile.salvaInvitatiSuFile(this.listaInvitati, nomeFile);
+    }
+
+    /**
+     * Carica gli invitati da file CSV e li aggiunge al sistema.
+     * Usa GestoreFile per leggere, poi aggiunge uno a uno per mantenere la sincronizzazione.
+     */
+    public void caricaInvitatiDaFile(String nomeFile) {
+        List<Invitato> nuoviInvitati = GestoreFile.caricaInvitatiDaFile(nomeFile);
+
+        int contatore = 0;
+        for (Invitato inv : nuoviInvitati) {
+            if (aggiungiInvitato(inv)) {
+                contatore++;
+            }
+        }
+
+        System.out.println("Caricati " + contatore + " nuovi invitati da " + nomeFile);
+    }
+
+
+    /**
      * Salva lo stato completo del WeddingManager su file binario.
-     * Utilizza la serializzazione Java per salvare invitati, tavoli e fornitori.
-     *
-     * @param nomeFile Il percorso del file di destinazione (es. "backup.dat").
-     * @throws IOException Se si verifica un errore di scrittura su disco.
      */
     public void salvaDatiBinari(String nomeFile) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nomeFile))) {
@@ -313,23 +348,22 @@ public class WeddingManager {
 
     /**
      * Carica lo stato completo del WeddingManager da file binario.
-     * Ricostruisce automaticamente le strutture dati derivate (HashSet, Hashmap).
-     *
-     * @param nomeFile Il percorso del file da caricare.
-     * @throws IOException            Se si verifica un errore di lettura del file.
-     * @throws ClassNotFoundException Se le classi serializzate non sono disponibili.
      */
     public void caricaDatiBinari(String nomeFile) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeFile))) {
             listaInvitati = (ArrayList<Invitato>) ois.readObject();
-            listaTavoli = (ArrayList<Tavolo>) ois.readObject();
-            elencoFornitori = (ArrayList<ServiziMatrimonio>) ois.readObject();
+            
+            // Ricostruzione strutture derivate
             emailRegistrate.clear();
             mappaInvitati.clear();
             for (Invitato inv : listaInvitati) {
                 emailRegistrate.add(inv.getEmail());
                 mappaInvitati.put(inv.getEmail().toLowerCase(), inv);
             }
+
+            listaTavoli = (ArrayList<Tavolo>) ois.readObject();
+            elencoFornitori = (ArrayList<ServiziMatrimonio>) ois.readObject();
+            
             mappaFornitori.clear();
             for (ServiziMatrimonio serv : elencoFornitori) {
                 mappaFornitori.put(serv.getIdServizio(), serv);
@@ -338,20 +372,15 @@ public class WeddingManager {
         System.out.println("Dati caricati da: " + nomeFile);
     }
 
-    public void stampaListaInvitati(OrdinamentoStrategy strategia){
-        List<Invitato> listaDaOrdinare = new ArrayList<>(this.listaInvitati);
-        List<Invitato> listaOrdinata = strategia.ordina(listaDaOrdinare);
-        System.out.println("--- Lista invitati ordinata con strategia: " + strategia.getClass().getSimpleName() + "---");
-        listaOrdinata.forEach(System.out::println);
-    }
 
-    public synchronized void confermaInvitato(String email){
-        Invitato inv = mappaInvitati.get(email.toLowerCase());
-            if (inv != null) {
-                throw new InvitatoNonTrovatoException(email);
-            }
-            inv.setConfermato(true);
-        System.out.println("Invitato confermato: " + inv.getNome() + " " + inv.getCognome());
-        }
+    // =================================================================================
+    // METODI DI UTILITÀ (PRIVATI & GENERICS)
+    // =================================================================================
+
+    public synchronized void svuotaTutto() {
+        listaInvitati.clear();
+        emailRegistrate.clear();
+        mappaInvitati.clear();
+    }
 
 }

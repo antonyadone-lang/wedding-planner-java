@@ -1,4 +1,4 @@
-public class DatiInvitatoException extends Exception {
+public class DatiInvitatoException extends WeddingException {
     public DatiInvitatoException(String messaggio) {
         super(messaggio);
     }

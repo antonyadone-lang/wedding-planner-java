@@ -1,4 +1,4 @@
-public class TavoloPienoException extends Exception {
+public class TavoloPienoException extends WeddingException {
     public TavoloPienoException(String message) {
         super(message);
     }
