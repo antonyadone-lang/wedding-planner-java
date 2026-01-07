@@ -8,7 +8,7 @@ public class Invitato implements Serializable {
     private final String nome;
     private final String cognome;
     private final String email;
-    private boolean confermato;
+    private StatoInvitato stato;
     private LocalDate dataRisposta;
     private Tavolo tavoloAssegnato;
     private String dietaSpeciale;
@@ -20,7 +20,7 @@ public class Invitato implements Serializable {
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
-        this.confermato = false;
+        this.stato = StatoInvitato.IN_ATTESA;
         this.idInvitato = ++contatoreInvitati;
     }
 
@@ -28,7 +28,7 @@ public class Invitato implements Serializable {
         this.nome = builder.nome;
         this.cognome = builder.cognome;
         this.email = builder.email;
-        this.confermato = builder.confermato;
+        this.stato = builder.stato;
         this.dietaSpeciale = builder.dietaSpeciale;
         this.allergie = builder.allergie;
         this.numeroTelefono = builder.numeroTelefono;
@@ -60,12 +60,20 @@ public class Invitato implements Serializable {
         return idInvitato;
     }
 
-    public boolean isConfermato() {
-        return confermato;
+    public StatoInvitato getStato() {
+        return stato;
     }
 
-    public void setConfermato(boolean confermato) {
-        this.confermato = confermato;
+    public boolean isConfermato() {
+        return this.stato == StatoInvitato.CONFERMATO;
+    }
+
+    public void setStato(StatoInvitato stato) {
+        this.stato = stato;
+    }
+
+    public void conferma() {
+        this.stato = StatoInvitato.CONFERMATO;
     }
 
     public LocalDate getDataRisposta() {
@@ -121,7 +129,7 @@ public class Invitato implements Serializable {
         private final String nome;
         private final String cognome;
         private final String email;
-        private boolean confermato = false;
+        private StatoInvitato stato = StatoInvitato.IN_ATTESA;
         private String dietaSpeciale;
         private String allergie;
         private String numeroTelefono;
@@ -132,8 +140,8 @@ public class Invitato implements Serializable {
             this.email = email;
         }
 
-        public Builder confermato(boolean confermato){
-            this.confermato = confermato;
+        public Builder stato(StatoInvitato stato) {
+            this.stato = stato;
             return this;
         }
 
@@ -163,7 +171,7 @@ public class Invitato implements Serializable {
                 "nome='" + nome + '\'' +
                 ", cognome='" + cognome + '\'' +
                 ", email='" + email + '\'' +
-                ", statoConferma=" + confermato +
+                ", statoConferma=" + stato +
                 '}';
     }
 

@@ -24,7 +24,7 @@ public class WeddingPlannerMain {
         Tavolo tavolo4 = new Tavolo(4, 1);
 
         // ========== INIZIALIZZAZIONE WEDDING MANAGER ==========
-        WeddingManager weddingManager = WeddingManager.getInstance();
+        IWeddingManager weddingManager = WeddingManagerSQL.getInstance();
         weddingManager.setBudgetMassimo(6000);
 
         // Registra invitati nel manager
@@ -162,11 +162,11 @@ public class WeddingPlannerMain {
         System.out.println("\n=== TEST RIMOZIONE INVITATI SENZA RSVP ===");
         LocalDate dataLimite = LocalDate.of(2025, 10, 4);
         invitato1.setDataRisposta(LocalDate.of(2025, 8, 20));
-        invitato1.setConfermato(true);
+        invitato1.setStato(StatoInvitato.CONFERMATO);
         invitato2.setDataRisposta(null);
         invitato3.setDataRisposta(LocalDate.of(2025, 10, 5));
         testimone1.setDataRisposta(LocalDate.of(2025, 8, 15));
-        testimone1.setConfermato(true);
+        testimone1.setStato(StatoInvitato.CONFERMATO);
         int rimossi = weddingManager.rimuoviInvitatiSenzaRSVP(dataLimite);
         System.out.println("Invitati Rimossi: " + rimossi);
         System.out.println("\nInvitati Rimanenti: ");
@@ -240,15 +240,15 @@ public class WeddingPlannerMain {
 
         System.out.println("\n --- Creazione e Salvataggio ---");
         Invitato csv1 = new Invitato("Paolo", "Giallo", "paolo.giallo@gmail.com");
-        csv1.setConfermato(true);
+        csv1.setStato(StatoInvitato.CONFERMATO);
         weddingManager.aggiungiInvitato(csv1);
 
         Invitato csv2 = new Invitato("Marta", "Verde", "marta.verde@gmail.com");
-        csv2.setConfermato(false);
+        csv2.setStato(StatoInvitato.CONFERMATO);
         weddingManager.aggiungiInvitato(csv2);
 
         Invitato csv3 = new Invitato("Giacomo", "Pinko", "giacomo.pinko@gmail.com");
-        csv3.setConfermato(true);
+        csv3.setStato(StatoInvitato.CONFERMATO);
         weddingManager.aggiungiInvitato(csv3);
 
         weddingManager.salvaInvitatiSuFile("invitati.csv");
@@ -278,11 +278,11 @@ public class WeddingPlannerMain {
         System.out.println("Creazione e salvataggio binario");
 
         Invitato bin1 = new Invitato("Anna", "Neri", "anna.neri@test.com");
-        bin1.setConfermato(true);
+        bin1.setStato(StatoInvitato.CONFERMATO);
         weddingManager.aggiungiInvitato(bin1);
 
         Invitato bin2 = new Invitato("Marco", "Blu", "marco.blue@test.com");
-        bin2.setConfermato(false);
+        bin2.setStato(StatoInvitato.RIFIUTATO);
         weddingManager.aggiungiInvitato(bin2);
 
         Fotografo fotoTest = new Fotografo("Studio foto", "foto@test.com", 1500);
@@ -299,7 +299,12 @@ public class WeddingPlannerMain {
         weddingManager.salvaDatiBinari("backup.dat");
 
         System.out.println("Invitati in memoria: " + weddingManager.getListaInvitati().size());
-        System.out.println("Fornitori in memoria: " + weddingManager.cercaFornitorePerId(fotoTest.getIdServizio()).getNomeFornitore());
+        ServiziMatrimonio fornitoreCercato = weddingManager.cercaFornitorePerId(fotoTest.getIdServizio());
+        if (fornitoreCercato != null) {
+            System.out.println("Fornitori in memoria: " + fornitoreCercato.getNomeFornitore());
+        } else {
+            System.out.println("Fornitori in memoria: [Dato non disponibile su SQL]");
+        }
 
         System.out.println("\n=== Simulazione Chiusura programma ===");
 
@@ -338,7 +343,7 @@ public class WeddingPlannerMain {
         // ========== TEST BUILDER PATTERN ==========
         System.out.println("\n=== TEST BUILDER PATTERN ===");
         Invitato builderTest1 = new Invitato.Builder("Fabrizio", "Signorini", "fabrizio.signorini@gmail.com")
-                .confermato(true)
+                .stato(StatoInvitato.CONFERMATO)
                 .dietaSpeciale("Vegetariana")
                 .allergie("Glutine, Lattosio")
                 .numeroTelefono("+39 1234567890")
@@ -463,5 +468,26 @@ public class WeddingPlannerMain {
             System.out.println("Errore durante l'attesa del thread.");
         }
         System.out.println("Sistema terminato.");
+
+        // ========== TEST DATABASE (DAO) ==========
+        System.out.println("\n=== TEST DATABASE (DAO) ===");
+        InvitatoDAO dao = new InvitatoDAO();
+
+        Invitato dbInv =new Invitato("Giuseppe", "Verdi", "giuseppe.verdi@db.com");
+        dbInv.setStato(StatoInvitato.CONFERMATO);
+
+        try {
+            dao.salva(dbInv);
+            System.out.println("Salvataggio OK!");
+
+            List<Invitato> dalDb = dao.caricaTutti();
+            System.out.println("Invitati nel DB: " + dalDb.size());
+            for (Invitato i : dalDb) {
+                System.out.println(" - " + i.getNome() + " " + i.getCognome() + " (" + i.getStato() + ")");
+            }
+        }catch (Exception e) {
+            System.out.println("Errore DB: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

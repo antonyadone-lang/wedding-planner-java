@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * Gestore centrale per l'organizzazione del matrimonio.
  * Coordina invitati, tavoli e fornitori di servizi.
  */
-public class WeddingManager {
+public class WeddingManager implements IWeddingManager {
 
     // =================================================================================
     // ATTRIBUTI
@@ -92,7 +92,6 @@ public class WeddingManager {
         
         // Controllo duplicati usando la Mappa
         if (mappaInvitati.containsKey(emailKey)) {
-            System.err.println("ERRORE: email già registrata - " + invitato.getEmail());
             return false;
         }
         
@@ -126,8 +125,7 @@ public class WeddingManager {
             throw new InvitatoNonTrovatoException(email);
         }
         
-        inv.setConfermato(true);
-        System.out.println("Invitato confermato: " + inv.getNome() + " " + inv.getCognome());
+        inv.setStato(StatoInvitato.CONFERMATO);
     }
 
     /**
@@ -216,9 +214,8 @@ public class WeddingManager {
         boolean aggiunto = tavolo.aggiungiOspite(invitato);
         if (aggiunto) {
             invitato.setTavoloAssegnato(tavolo);
-            System.out.println(invitato.getNome() + " assegnato al tavolo " + tavolo.getNumeroTavolo());
         } else {
-            System.out.println("Impossibile assegnare " + invitato.getNome() + " - Tavolo pieno!");
+            throw new TavoloPienoException("Impossibile assegnare al tavolo (errore generico)");
         }
     }
 
@@ -320,7 +317,7 @@ public class WeddingManager {
      * Carica gli invitati da file CSV e li aggiunge al sistema.
      * Usa GestoreFile per leggere, poi aggiunge uno a uno per mantenere la sincronizzazione.
      */
-    public void caricaInvitatiDaFile(String nomeFile) {
+    public int caricaInvitatiDaFile(String nomeFile) {
         List<Invitato> nuoviInvitati = GestoreFile.caricaInvitatiDaFile(nomeFile);
 
         int contatore = 0;
@@ -329,8 +326,7 @@ public class WeddingManager {
                 contatore++;
             }
         }
-
-        System.out.println("Caricati " + contatore + " nuovi invitati da " + nomeFile);
+        return contatore;
     }
 
 
@@ -343,7 +339,6 @@ public class WeddingManager {
             oos.writeObject(listaTavoli);
             oos.writeObject(elencoFornitori);
         }
-        System.out.println("Dati salvati in: " + nomeFile);
     }
 
     /**
@@ -369,7 +364,6 @@ public class WeddingManager {
                 mappaFornitori.put(serv.getIdServizio(), serv);
             }
         }
-        System.out.println("Dati caricati da: " + nomeFile);
     }
 
 

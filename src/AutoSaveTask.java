@@ -2,9 +2,9 @@ import java.io.IOException;
 
 public class AutoSaveTask implements Runnable {
     private volatile boolean running = true;
-    private WeddingManager manager;
+    private IWeddingManager manager;
 
-    public AutoSaveTask(WeddingManager manager) {
+    public AutoSaveTask(IWeddingManager manager) {
         this.manager = manager;
     }
 

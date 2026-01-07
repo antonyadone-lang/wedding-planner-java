@@ -47,11 +47,11 @@ public class GestoreFile {
     public static void salvaInvitatiSuFile(List<Invitato> listaInvitati, String nomeFile) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeFile))) {
             for (Invitato inv : listaInvitati) {
-                String rigaCSV = String.format("%s,%s,%s,%b",
+                String rigaCSV = String.format("%s,%s,%s,%s",
                         inv.getNome(),
                         inv.getCognome(),
                         inv.getEmail(),
-                        inv.isConfermato());
+                        inv.getStato());
                 writer.write(rigaCSV);
                 writer.newLine();
             }
@@ -79,10 +79,21 @@ public class GestoreFile {
                     String nome = dati[0];
                     String cognome = dati[1];
                     String email = dati[2];
-                    boolean confermato = Boolean.parseBoolean(dati[3]);
+                    String statoStr = dati[3];
 
                     Invitato invitato = new Invitato(nome, cognome, email);
-                    invitato.setConfermato(confermato);
+                    try {
+                        StatoInvitato stato = StatoInvitato.valueOf(statoStr);
+                        invitato.setStato(stato);
+                    }catch (IllegalArgumentException e) {
+                        if (statoStr.equalsIgnoreCase("true")) {
+                            invitato.setStato(StatoInvitato.CONFERMATO);
+                        }else if (statoStr.equalsIgnoreCase("false")) {
+                            invitato.setStato(StatoInvitato.IN_ATTESA);
+                        }else {
+                            invitato.setStato(StatoInvitato.DA_RICONTATTARE);
+                        }
+                    }
 
                     invitatiCaricati.add(invitato);
 
