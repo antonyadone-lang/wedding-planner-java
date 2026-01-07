@@ -501,5 +501,19 @@ To ensure scalability and maintainability, the project has undergone significant
 
 - **Code Organization**:
   - Restructured `WeddingManager` using a standard layout (Attributes -> Singleton -> Business Logic -> Persistence -> Utils) to improve readability and navigation.
+
+###  Database Integration & DAO Pattern
+
+The project has been upgraded from a file-based persistence system to a robust relational database backend using **MySQL**. This transition introduces a professional, scalable, and secure way to manage data.
+
+-   **Persistence Layer**: All data related to guests (`Invitato`) is now stored in a MySQL database, ensuring data integrity and persistence across application restarts.
+
+-   **DAO (Data Access Object) Pattern**: To decouple business logic from data access logic, the `InvitatoDAO` class was created. This class is solely responsible for all SQL operations (`INSERT`, `SELECT`, etc.) on the `invitati` table.
+
+-   **Dependency Inversion in Action**: Thanks to the `IWeddingManager` interface, two separate implementations now coexist:
+    -   `WeddingManager`: The original implementation using CSV/binary files.
+    -   `WeddingManagerSQL`: The new implementation that uses `InvitatoDAO` to communicate with the database.
+    The main application can switch between these persistence strategies by changing a single line of code, showcasing a key SOLID principle.
+
 ---
 *Note: This project is part of my professional growth in Java Development. It demonstrates my ability to handle design patterns and concurrent programming.*
