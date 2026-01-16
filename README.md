@@ -3,17 +3,17 @@
 Portfolio project demonstrating Object-Oriented Programming concepts in java.
 
 ##  Features
--Inheritance: "Testimone" extends "Invitato".
+-Inheritance: "com.wedding.model.Testimone" extends "com.wedding.model.Invitato".
 -Polymorphism: Override of 'presentati()' method.
 -Encapsulation: Private attributes with getters/setters.
 -Collections: ArrayList for dynamic guest management.
--Composition: 'Tavolo' contains guests, 'WeddingManager' coordinates
+-Composition: 'com.wedding.model.Tavolo' contains guests, 'com.wedding.service.WeddingManager' coordinates
 
 ## Classes
--'Invitato': Base guest class.
--'Testimone': Witness (extends Invitato).
--'Tavolo': Table with capacity management.
--'WeddingManager': Central cooridnator.
+-'com.wedding.model.Invitato': Base guest class.
+-'com.wedding.model.Testimone': Witness (extends com.wedding.model.Invitato).
+-'com.wedding.model.Tavolo': Table with capacity management.
+-'com.wedding.service.WeddingManager': Central cooridnator.
 
 ## Technologies
 -Java
@@ -28,36 +28,36 @@ The project implements an abstract class `ServizioMatrimonio` that defines:
 - Concrete method: `scheda()` - displays supplier information
 
 ### Supplier Classes
-1. **Fotografo** (Photographer) - Fixed package cost
+1. **com.wedding.model.Fotografo** (Photographer) - Fixed package cost
 2. **DJ** - Fixed package cost
-3. **Catering** - Cost per person × number of guests
-4. **Fiorista** (Florist) - Fixed cost + transportation fee
+3. **com.wedding.model.Catering** - Cost per person × number of guests
+4. **com.wedding.model.Fiorista** (Florist) - Fixed cost + transportation fee
 
 ### Cost Calculation
-The `WeddingManager` class:
+The `com.wedding.service.WeddingManager` class:
 - Stores all suppliers in an `ArrayList<ServizioMatrimonio>`
 - Calculates total wedding cost using polymorphism
 - Each supplier's `calcolaCosto()` method is called dynamically
 
 ## Interface and Polymorphism
-- **Interface**: `Tracciabile` for tracking task completion
-- **Enum**: `StatoLavoro` for detailed state management in Fiorista
-- **Implementations**: Fiorista (with Enum) and Compiti (with boolean)
-- **Polymorphism**: WeddingManager manages different objects through same interface
+- **Interface**: `com.wedding.model.Tracciabile` for tracking task completion
+- **Enum**: `StatoLavoro` for detailed state management in com.wedding.model.Fiorista
+- **Implementations**: com.wedding.model.Fiorista (with Enum) and com.wedding.model.Compiti (with boolean)
+- **Polymorphism**: com.wedding.service.WeddingManager manages different objects through same interface
 
 ## Static and Final Keywords
 
 ### Static Members
-- **Static counter**: `Invitato.contatoreInvitati` - Tracks total number of guests created across all instances
+- **Static counter**: `com.wedding.model.Invitato.contatoreInvitati` - Tracks total number of guests created across all instances
 - **Static method**: `getTotaleInvitati()` - Returns the total guest count without requiring an instance
-- **Static constants**: `ConfigurazioneMatrimonio` class with shared configuration values
+- **Static constants**: `com.wedding.model.ConfigurazioneMatrimonio` class with shared configuration values
 
 ### Final Members
 - **Final instance variable**: `idInvitato` - Unique immutable ID assigned to each guest at creation
 - **Final constants**: Configuration values like `CAPACITA_MASSIMA_SALA`, `ALIQUOTA_IVA`, `MIN_INVITATI`
 
 ### Configuration Constants
-The `ConfigurazioneMatrimonio` class provides:
+The `com.wedding.model.ConfigurazioneMatrimonio` class provides:
 - `CAPACITA_MASSIMA_SALA` (120) - Maximum venue capacity
 - `ALIQUOTA_IVA` (0.22) - VAT rate for cost calculations
 - `MIN_PERSONE_PER_TAVOLO` (6) - Minimum guests per table
@@ -69,34 +69,34 @@ The `ConfigurazioneMatrimonio` class provides:
 ### Custom Generic Classes
 The project implements custom generic classes for type-safe data handling:
 
-#### Coppia<K, V>
+#### com.wedding.model.Coppia<K, V>
 Generic class for storing key-value pairs of any type:
 - **Type parameters**: `K` (key), `V` (value)
 - **Use case**: Pairing related data (e.g., supplier name with cost)
 - **Methods**: `getChiave()`, `getValore()`, `toString()`
 
-#### RisultatoOperazione<T>
+#### com.wedding.util.RisultatoOperazione<T>
 Generic wrapper class for operation results (similar to Optional/Result pattern):
 - **Type parameter**: `T` (result data type)
 - **Attributes**: `dato` (T), `successo` (boolean), `messaggioErrore` (String)
 - **Constructor overloading**: Success constructor (T dato) and failure constructor (String error)
 - **Use case**: Structured error handling without exceptions or null returns
-- **Example**: `cercaInvitatoPerEmail()` returns `RisultatoOperazione<Invitato>`
+- **Example**: `cercaInvitatoPerEmail()` returns `com.wedding.util.RisultatoOperazione<com.wedding.model.Invitato>`
 
 ### Wildcards and Type Flexibility
 
 #### Upper Bound Wildcard (`? extends T`)
 Demonstrates generic type invariance and wildcard usage:
-- **Method**: `stampaNomi(List<? extends Invitato> lista)`
-- **Accepts**: `List<Invitato>`, `List<Testimone>`, or any subclass list
-- **Key concept**: `List<Testimone>` is NOT a subtype of `List<Invitato>` (generic invariance)
-- **Solution**: Wildcard `? extends Invitato` enables polymorphic list handling
+- **Method**: `stampaNomi(List<? extends com.wedding.model.Invitato> lista)`
+- **Accepts**: `List<com.wedding.model.Invitato>`, `List<com.wedding.model.Testimone>`, or any subclass list
+- **Key concept**: `List<com.wedding.model.Testimone>` is NOT a subtype of `List<com.wedding.model.Invitato>` (generic invariance)
+- **Solution**: Wildcard `? extends com.wedding.model.Invitato` enables polymorphic list handling
 - **PECS rule**: Producer Extends - use when reading from collection
 
 ### Benefits
 - **Type safety**: Compile-time type checking prevents runtime errors
 - **Code reusability**: Single generic class works with multiple types
-- **Professional patterns**: RisultatoOperazione follows industry-standard error handling
+- **Professional patterns**: com.wedding.util.RisultatoOperazione follows industry-standard error handling
 - **Flexibility**: Wildcards enable working with inheritance hierarchies in collections
 
 ## Collections and Iterators
@@ -105,20 +105,20 @@ Demonstrates generic type invariance and wildcard usage:
 Demonstrates safe collection modification during iteration using the Iterator pattern:
 
 #### rimuoviInvitatiSenzaRSVP(LocalDate dataLimite)
-Method in WeddingManager that removes guests who:
+Method in com.wedding.service.WeddingManager that removes guests who:
 - Did not respond (dataRisposta == null)
 - Responded after the deadline (dataRisposta.isAfter(dataLimite))
 - Responded but did not confirm (confermato == false)
 
 **Key Implementation**:
-- Uses `Iterator<Invitato>` instead of for-each loop
+- Uses `Iterator<com.wedding.model.Invitato>` instead of for-each loop
 - Calls `iterator.remove()` for safe removal during iteration
 - Avoids `ConcurrentModificationException`
 - Returns count of removed guests
 
 ### Date Management with LocalDate
 Integration of `java.time.LocalDate` for RSVP tracking:
-- **dataRisposta** attribute in Invitato class
+- **dataRisposta** attribute in com.wedding.model.Invitato class
 - Date comparison with `.isAfter()` method
 - Null-safe date validation
 - Utility method `haRisposto()` for readability
@@ -128,26 +128,26 @@ Integration of `java.time.LocalDate` for RSVP tracking:
 ### HashSet for Email Uniqueness
 Prevents duplicate guest registrations using email-based uniqueness:
 - **HashSet<String> emailRegistrate** - O(1) lookup for duplicate detection
-- **equals() and hashCode()** - Implemented in Invitato class based on email
+- **equals() and hashCode()** - Implemented in com.wedding.model.Invitato class based on email
 - **aggiungiInvitato()** - Validates email uniqueness before adding guest
 
 ### HashMap for Supplier Lookup
 Fast supplier retrieval by ID:
-- **HashMap<Integer, ServiziMatrimonio> mappaFornitori** - O(1) access by supplier ID
+- **HashMap<Integer, com.wedding.model.ServiziMatrimonio> mappaFornitori** - O(1) access by supplier ID
 - **Auto-increment ID system** - Each supplier gets unique ID via static counter
 - **cercaFornitorePerId(int id)** - Direct supplier lookup without iteration
 
 ### Lambda Expressions and Functional Interfaces
 
 #### Custom Functional Interface
-**FiltroInvitato** - Custom functional interface for guest filtering:
-- Single abstract method: `boolean soddisfaCondizione(Invitato inv)`
-- **filtraInvitati(FiltroInvitato filtro)** - Accepts lambda expressions
+**com.wedding.util.FiltroInvitato** - Custom functional interface for guest filtering:
+- Single abstract method: `boolean soddisfaCondizione(com.wedding.model.Invitato inv)`
+- **filtraInvitati(com.wedding.util.FiltroInvitato filtro)** - Accepts lambda expressions
 - **Use case**: `filtraInvitati(inv -> inv.isConfermato())` - Filter confirmed guests
 
 #### Built-in Predicate<T>
-**Predicate<Invitato>** - Java's built-in functional interface for conditional removal:
-- **rimuoviSe(Predicate<Invitato> criterio)** - Removes guests matching condition
+**Predicate<com.wedding.model.Invitato>** - Java's built-in functional interface for conditional removal:
+- **rimuoviSe(Predicate<com.wedding.model.Invitato> criterio)** - Removes guests matching condition
 - **Use case**: `rimuoviSe(inv -> !inv.haRisposto())` - Remove non-responders
 - **Method reference support**: Works with lambda and method references
 
@@ -200,7 +200,7 @@ All exceptions inherit from `Throwable`:
 
 ### File I/O with Exception Handling
 
-#### ImpostazioniMatrimonio Class
+#### com.wedding.model.ImpostazioniMatrimonio Class
 Configuration class for wedding settings:
 - **Attributes**: `budgetMassimo`, `dataEvento`, `location`
 - **Purpose**: Store and manage wedding configuration data
@@ -217,7 +217,7 @@ Loads wedding settings from file with comprehensive error handling:
 
 ### Custom Exceptions
 
-#### TavoloPienoException
+#### com.wedding.util.TavoloPienoException
 Custom checked exception for table capacity management:
 - **extends Exception** → Checked exception (compiler-enforced handling)
 - **Constructor**: Accepts custom error message
@@ -225,14 +225,14 @@ Custom checked exception for table capacity management:
 
 #### Implementation Pattern
 1. **Create exception class** → Extend Exception with message constructor
-2. **Throw exception** → Use `throw new TavoloPienoException(message)` when condition met
-3. **Declare in signature** → Add `throws TavoloPienoException` to method
+2. **Throw exception** → Use `throw new com.wedding.util.TavoloPienoException(message)` when condition met
+3. **Declare in signature** → Add `throws com.wedding.util.TavoloPienoException` to method
 4. **Handle with try-catch** → Catch specific exception type in caller
 
 #### Modified Methods
 - **assegnaTavolo()** → Validates table capacity before assignment
-- **Tavolo.getCapacitaMassima()** → Returns maximum table capacity
-- **Tavolo.getNumeroOspiti()** → Returns current guest count
+- **com.wedding.model.Tavolo.getCapacitaMassima()** → Returns maximum table capacity
+- **com.wedding.model.Tavolo.getNumeroOspiti()** → Returns current guest count
 
 ### Exception Handling Keywords
 - **try** → Block containing code that may throw exceptions
@@ -268,7 +268,7 @@ Saves guest list to CSV file:
 Loads guest list from CSV file:
 - **BufferedReader** → Efficient line-by-line reading
 - **String.split(",")** → Parse CSV format
-- **Reconstruction**: Creates new Invitato objects from data
+- **Reconstruction**: Creates new com.wedding.model.Invitato objects from data
 
 #### svuotaTutto()
 Clears both listaInvitati and emailRegistrate:
@@ -289,20 +289,20 @@ Marker interface enabling object serialization:
 - Subclasses automatically inherit serialization capability
 
 ### Implemented Classes
-- Invitato implements Serializable
-- ServiziMatrimonio implements Serializable (all subclasses inherit)
+- com.wedding.model.Invitato implements Serializable
+- com.wedding.model.ServiziMatrimonio implements Serializable (all subclasses inherit)
 
 ### Binary File I/O
 
 #### salvaDatiBinari(String nomeFile)
-Saves complete WeddingManager state to binary file:
+Saves complete com.wedding.service.WeddingManager state to binary file:
 - ObjectOutputStream serializes Java objects
 - Preserves: listaInvitati, listaTavoli, elencoFornitori
 - Format: Binary (not human-readable)
 - Use case: Complete application state backup
 
 #### caricaDatiBinari(String nomeFile)
-Loads complete WeddingManager state from binary file:
+Loads complete com.wedding.service.WeddingManager state from binary file:
 - ObjectInputStream deserializes Java objects
 - Type casting required after readObject()
 - Order matters: Read objects in same order as written
@@ -403,19 +403,19 @@ Immutability for collection references:
 The project implements three core creational design patterns to manage object instantiation in a flexible, scalable, and maintainable way.
 
 ### Singleton Pattern
-- **Class**: `WeddingManager`
-- **Purpose**: Ensures that only one instance of `WeddingManager` exists throughout the application, providing a single global point of access to coordinate the event.
+- **Class**: `com.wedding.service.WeddingManager`
+- **Purpose**: Ensures that only one instance of `com.wedding.service.WeddingManager` exists throughout the application, providing a single global point of access to coordinate the event.
 - **Implementation**: Achieved through a `private` constructor and a `public static synchronized getInstance()` method that handles lazy, thread-safe instantiation.
 
 ### Builder Pattern
-- **Class**: `Invitato`
-- **Purpose**: Simplifies the creation of `Invitato` objects, which have several optional attributes (`dietaSpeciale`, `allergie`, `numeroTelefono`). It provides a readable, fluent API.
-- **Implementation**: A static inner `Builder` class within `Invitato` with method chaining (`return this`).
+- **Class**: `com.wedding.model.Invitato`
+- **Purpose**: Simplifies the creation of `com.wedding.model.Invitato` objects, which have several optional attributes (`dietaSpeciale`, `allergie`, `numeroTelefono`). It provides a readable, fluent API.
+- **Implementation**: A static inner `Builder` class within `com.wedding.model.Invitato` with method chaining (`return this`).
 
 ### Factory Method Pattern
-- **Class**: `FornitoreFactory`
-- **Purpose**: Decouples the client code from the concrete implementation of suppliers (`ServiziMatrimonio` subclasses). It centralizes the logic for creating different types of suppliers.
-- **Implementation**: A factory class with a static method `creareFornitore()`. It takes a `TipoFornitore` enum to decide which object to instantiate (`Fotografo`, `Dj`, `Catering`, `Fiorista`) and uses `varargs` (`double...`) to handle varying constructor parameters.
+- **Class**: `com.wedding.service.FornitoreFactory`
+- **Purpose**: Decouples the client code from the concrete implementation of suppliers (`com.wedding.model.ServiziMatrimonio` subclasses). It centralizes the logic for creating different types of suppliers.
+- **Implementation**: A factory class with a static method `creareFornitore()`. It takes a `com.wedding.model.TipoFornitore` enum to decide which object to instantiate (`com.wedding.model.Fotografo`, `com.wedding.model.Dj`, `com.wedding.model.Catering`, `com.wedding.model.Fiorista`) and uses `varargs` (`double...`) to handle varying constructor parameters.
 
 ## Latest Updates
 
@@ -428,7 +428,7 @@ The project implements three core creational design patterns to manage object in
 ### Multithreading & Safe AutoSave System
 * **Description:** Introduced an asynchronous **AutoSave** feature that runs in a background thread while the user interacts with the main menu.
 * **Technical Details & Safety:**
-    * **Runnable Interface:** Created the `AutoSaveTask` class to define the background execution logic.
+    * **Runnable Interface:** Created the `com.wedding.util.AutoSaveTask` class to define the background execution logic.
     * **Thread Safety:** Implemented the `volatile` keyword to ensure immediate visibility of the termination signal across different threads.
     * **Graceful Shutdown:** Developed a clean exit strategy using `interrupt()` to wake the thread from its sleep cycle and `join()` to ensure the background process completes before the main application terminates.
     * **Timing:** The background save cycle is synchronized to trigger every 10 seconds using `Thread.sleep()`.
@@ -438,11 +438,11 @@ The project implements three core creational design patterns to manage object in
 ### Strategy Pattern
 The project implements the **Strategy Pattern** to handle interchangeable algorithms at runtime, specifically for sorting operations.
 
-- **Interface**: `OrdinamentoStrategy`
-- **Purpose**: Defines a common contract for sorting algorithms, allowing the `WeddingManager` to sort guests without knowing the specific implementation details.
+- **Interface**: `com.wedding.util.OrdinamentoStrategy`
+- **Purpose**: Defines a common contract for sorting algorithms, allowing the `com.wedding.service.WeddingManager` to sort guests without knowing the specific implementation details.
 - **Implementations**:
-    - `OrdinamentoPerCognome`: Sorts guests alphabetically by surname.
-    - `OrdinamentoPerStato`: Sorts guests based on their RSVP confirmation status.
+    - `com.wedding.util.OrdinamentoPerCognome`: Sorts guests alphabetically by surname.
+    - `com.wedding.util.OrdinamentoPerStato`: Sorts guests based on their RSVP confirmation status.
 - **Benefit**: Eliminates complex conditional logic (if/else or switch) inside the manager and allows adding new sorting criteria without modifying existing code (Open/Closed Principle).
 
 ## Robustness and Custom Exceptions
@@ -452,32 +452,32 @@ The project demonstrates a professional approach to error handling by defining d
 ### Custom Exception Hierarchy
 
 #### 1. Business Logic Exceptions (Checked)
-**`BudgetSuperatoException`**
+**`com.wedding.util.BudgetSuperatoException`**
 - **Type**: Checked Exception (`extends Exception`)
 - **Trigger**: Thrown when adding a supplier would exceed the defined wedding budget.
 - **Handling**: Forces the caller to decide whether to increase the budget or reject the supplier.
 
 #### 2. Data Integrity Exceptions (Checked)
-**`DatiInvitatoException`**
+**`com.wedding.util.DatiInvitatoException`**
 - **Type**: Checked Exception (`extends Exception`)
 - **Trigger**: Thrown during CSV parsing when a line is malformed or missing required fields.
 - **Handling**: Used inside the parsing loop to skip specific corrupted lines while allowing the rest of the file to load successfully.
 
 #### 3. Runtime State Exceptions (Unchecked)
-**`InvitatoNonTrovatoException`**
+**`com.wedding.util.InvitatoNonTrovatoException`**
 - **Type**: Unchecked Exception (`extends RuntimeException`)
 - **Trigger**: Thrown when searching/confirming a guest by email fails.
 - **Handling**: Caught at the UI level (Main) to show a friendly error message to the user.
 
 ### Implementation Example
-How the `WeddingManager` enforces the budget constraint.
+How the `com.wedding.service.WeddingManager` enforces the budget constraint.
 
 ## Technical Highlights & Refactoring
 
 ### Data Structure Optimization (The "Big Switch")
-To improve performance and demonstrate advanced Java collections knowledge, the `WeddingManager` has been refactored to use a hybrid data structure approach:
+To improve performance and demonstrate advanced Java collections knowledge, the `com.wedding.service.WeddingManager` has been refactored to use a hybrid data structure approach:
 
-- **HashMap Implementation**: Transformed guest lookup from $O(n)$ (linear search) to **$O(1)$ (constant time)** using a `HashMap<String, Invitato>`. This ensures instant retrieval regardless of the guest list size.
+- **HashMap Implementation**: Transformed guest lookup from $O(n)$ (linear search) to **$O(1)$ (constant time)** using a `HashMap<String, com.wedding.model.Invitato>`. This ensures instant retrieval regardless of the guest list size.
 - **Synchronized Collections**: For educational demonstration, the system maintains synchronization between three distinct structures:
   - `ArrayList`: Preserves insertion order.
   - `HashSet`: Ensures unique email constraints.
@@ -492,27 +492,27 @@ To improve performance and demonstrate advanced Java collections knowledge, the 
 To ensure scalability and maintainability, the project has undergone significant architectural improvements applying **SOLID principles**:
 
 - **Single Responsibility Principle (SRP)**:
-  - Extracted all file I/O operations from `WeddingManager` into a dedicated `GestoreFile` utility class.
-  - `WeddingManager` now focuses solely on business logic (guest management, budget, tables), delegating persistence tasks.
+  - Extracted all file I/O operations from `com.wedding.service.WeddingManager` into a dedicated `com.wedding.util.GestoreFile` utility class.
+  - `com.wedding.service.WeddingManager` now focuses solely on business logic (guest management, budget, tables), delegating persistence tasks.
 
 - **Exception Hierarchy**:
-  - Introduced a centralized error handling strategy with a base class `WeddingException`.
-  - All domain-specific exceptions (e.g., `TavoloPienoException`, `InvitatoNonTrovatoException`) now extend `WeddingException`, allowing for unified error catching and handling in the main application flow.
+  - Introduced a centralized error handling strategy with a base class `com.wedding.util.WeddingException`.
+  - All domain-specific exceptions (e.g., `com.wedding.util.TavoloPienoException`, `com.wedding.util.InvitatoNonTrovatoException`) now extend `com.wedding.util.WeddingException`, allowing for unified error catching and handling in the main application flow.
 
 - **Code Organization**:
-  - Restructured `WeddingManager` using a standard layout (Attributes -> Singleton -> Business Logic -> Persistence -> Utils) to improve readability and navigation.
+  - Restructured `com.wedding.service.WeddingManager` using a standard layout (Attributes -> Singleton -> Business Logic -> Persistence -> Utils) to improve readability and navigation.
 
 ###  Database Integration & DAO Pattern
 
 The project has been upgraded from a file-based persistence system to a robust relational database backend using **MySQL**. This transition introduces a professional, scalable, and secure way to manage data.
 
--   **Persistence Layer**: All data related to guests (`Invitato`) is now stored in a MySQL database, ensuring data integrity and persistence across application restarts.
+-   **Persistence Layer**: All data related to guests (`com.wedding.model.Invitato`) is now stored in a MySQL database, ensuring data integrity and persistence across application restarts.
 
--   **DAO (Data Access Object) Pattern**: To decouple business logic from data access logic, the `InvitatoDAO` class was created. This class is solely responsible for all SQL operations (`INSERT`, `SELECT`, etc.) on the `invitati` table.
+-   **DAO (Data Access Object) Pattern**: To decouple business logic from data access logic, the `com.wedding.dao.InvitatoDAO` class was created. This class is solely responsible for all SQL operations (`INSERT`, `SELECT`, etc.) on the `invitati` table.
 
--   **Dependency Inversion in Action**: Thanks to the `IWeddingManager` interface, two separate implementations now coexist:
-    -   `WeddingManager`: The original implementation using CSV/binary files.
-    -   `WeddingManagerSQL`: The new implementation that uses `InvitatoDAO` to communicate with the database.
+-   **Dependency Inversion in Action**: Thanks to the `com.wedding.service.IWeddingManager` interface, two separate implementations now coexist:
+    -   `com.wedding.service.WeddingManager`: The original implementation using CSV/binary files.
+    -   `com.wedding.service.WeddingManagerSQL`: The new implementation that uses `com.wedding.dao.InvitatoDAO` to communicate with the database.
     The main application can switch between these persistence strategies by changing a single line of code, showcasing a key SOLID principle.
 
 ---
