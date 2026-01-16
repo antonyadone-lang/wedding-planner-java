@@ -515,5 +515,42 @@ The project has been upgraded from a file-based persistence system to a robust r
     -   `com.wedding.service.WeddingManagerSQL`: The new implementation that uses `com.wedding.dao.InvitatoDAO` to communicate with the database.
     The main application can switch between these persistence strategies by changing a single line of code, showcasing a key SOLID principle.
 
+##  Enterprise Architecture Update (Maven, JUnit, ACID)
+
+The project has evolved from a simple Java application to a **professional enterprise-grade backend**, adopting industry-standard tools and architectural patterns.
+
+### 1. Maven Build System
+Migrated from manual dependency management to **Apache Maven**.
+- **`pom.xml`**: Centralized configuration for dependencies (MySQL Connector, JUnit 5) and build lifecycle.
+- **Standard Directory Layout**: Adopted the universal structure:
+  - `src/main/java`: Source code
+  - `src/test/java`: Unit tests
+  - `src/main/resources`: Configuration files
+
+### 2. Package Organization
+Refactored the codebase into logical layers to improve maintainability and separation of concerns:
+- **`com.wedding.model`**: POJOs and Entities (`Invitato`, `Tavolo`, `Fornitore`).
+- **`com.wedding.dao`**: Data Access Objects for database interaction (`InvitatoDAO`, `TavoloDAO`).
+- **`com.wedding.service`**: Business Logic layer (`WeddingManagerSQL`).
+- **`com.wedding.util`**: Utilities, Exceptions, and Helper classes.
+- **`com.wedding.main`**: Entry point of the application.
+
+### 3. ACID Transactions
+Implemented manual transaction management to ensure data integrity during complex operations.
+- **Scenario**: Assigning a guest to a table involves updating the guest record AND the table capacity.
+- **Implementation**:
+  - `conn.setAutoCommit(false)`: Disables automatic saving.
+  - **Atomic Operations**: Both updates must succeed, or neither does.
+  - **Rollback**: In case of any error, `conn.rollback()` restores the database to its previous consistent state.
+
+### 4. Automated Testing with JUnit 5
+Replaced manual console-based testing with automated Unit Tests.
+- **`InvitatoTest`**: Verifies the correct creation and state management of guest objects.
+- **Benefits**: Immediate feedback loop, regression testing, and cleaner `Main` class.
+
+### 5. Full Database Integration (Guests & Tables)
+Complete relational mapping between Java objects and MySQL tables.
+- **Tables**: `invitati` and `tavoli` with Foreign Key relationships.
+- **Lazy/Eager Loading**: The `WeddingManagerSQL` handles the reconstruction of object graphs (linking Guests to real Table objects) upon startup.
 ---
 *Note: This project is part of my professional growth in Java Development. It demonstrates my ability to handle design patterns and concurrent programming.*
